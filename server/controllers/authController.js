@@ -36,7 +36,6 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = (req, res, next) => {
-  return next(new AppError('Something is wrong', 500));
   // Reached upon successful login.
   res.status(200).json({
     status: 'success',
@@ -45,4 +44,12 @@ exports.login = (req, res, next) => {
       user: req.user
     }
   });
+};
+
+exports.protect = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  next(new AppError('You are not logged in.', 401));
 };

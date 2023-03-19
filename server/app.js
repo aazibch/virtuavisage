@@ -24,13 +24,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const userRoutes = require('./routes/userRoutes');
-const postRoutes = require('./routes/postRoutes.js');
+const usersRoutes = require('./routes/usersRoutes');
+const postsRoutes = require('./routes/postsRoutes.js');
 const stableDiffusionRoutes = require('./routes/stableDiffusionRoutes.js');
 const globalErrorHandler = require('./middleware/error');
 
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/users', usersRoutes);
+app.use('/api/v1/post', postsRoutes);
 app.use('/api/v1/stable', stableDiffusionRoutes);
 app.use(globalErrorHandler);
 
