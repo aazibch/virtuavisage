@@ -1,7 +1,7 @@
 const express = require('express');
 const { v2: cloudinary } = require('cloudinary');
 
-const Post = require('../models/post.js');
+const Post = require('../models/Post.js');
 
 const router = express.Router();
 
