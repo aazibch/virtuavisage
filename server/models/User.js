@@ -7,8 +7,11 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please provide a name.'],
-    maxlength: [50, 'The username should have fewer than fifty characters.'],
-    minlength: [3, 'The name should at least have three characters.'],
+    maxlength: [
+      50,
+      'The username should be the maxiumum length of 50 characters.'
+    ],
+    minlength: [3, 'The name should be the minimum length of 3 characters.'],
     validate: {
       validator: function (val) {
         return /^[a-zA-Z ]*$/.test(val);
@@ -25,14 +28,17 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     maxlength: [
       50,
-      'The email address should have fewer than fifty characters.'
+      'The email address should be the maxiumum length of 50 characters.'
     ],
-    minlength: [5, 'The email address should at least have five characters.']
+    minlength: [
+      5,
+      'The email address should be the minimum length of 3 characters.'
+    ]
   },
   password: {
     type: String,
     required: [true, 'Please provide a password.'],
-    minlength: [8, 'The password should be at least eight characters long.'],
+    minlength: [8, 'The password should be a minimum length of 8 characters.'],
     select: false
   },
   passwordConfirmation: {

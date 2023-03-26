@@ -3,6 +3,9 @@ const {
   GenerationServiceClient
 } = require('../stability-ai/generation/generation_pb_service');
 const { grpc: GRPCWeb } = require('@improbable-eng/grpc-web');
+const {
+  NodeHttpTransport
+} = require('@improbable-eng/grpc-web-node-http-transport');
 const fs = require('fs');
 
 /** Builds a generation request for a specified engine with the specified parameters. */
@@ -180,6 +183,7 @@ exports.onGenerationComplete = function onGenerationComplete(response) {
         ` were filtered by the NSFW classifier`
     );
   }
+  // Initialize client
 
   // Do something with the successful image artifacts
   response.imageArtifacts.forEach((artifact) => {

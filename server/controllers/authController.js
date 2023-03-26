@@ -1,3 +1,4 @@
+const passport = require('passport');
 const catchAsync = require('../middleware/catchAsync');
 const filterObject = require('../utils/filterObject');
 const AppError = require('../utils/AppError');
@@ -35,7 +36,16 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.login = (req, res, next) => {
+exports.authenticate = (req, res, next) => {
+  passport.authenticate('local', function (err, user, info) {
+    if (err) return next(err);
+    if (!user) return next(info.error);
+    req.user = user;
+    next();
+  })(req, res, next);
+};
+
+exports.loginSuccess = (req, res, next) => {
   // Reached upon successful login.
   res.status(200).json({
     status: 'success',
@@ -44,6 +54,10 @@ exports.login = (req, res, next) => {
       user: req.user
     }
   });
+};
+
+exports.loginFailure = (req, res, next) => {
+  return next(new AppError('User not found.', 404));
 };
 
 exports.protect = (req, res, next) => {
