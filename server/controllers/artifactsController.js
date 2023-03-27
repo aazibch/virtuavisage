@@ -17,7 +17,10 @@ exports.createArtifact = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: { artifact }
+    data: {
+      prompt,
+      artifact
+    }
   });
 });
 
@@ -43,14 +46,43 @@ exports.saveArtifactToCollection = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.removeArtifactFromCollection = catchAsync(async (req, res, next) => {
+  const { artifactId: id } = req.params;
+
+  const artifact = await Artifact.findByIdAndDelete(id);
+
+  if (!artifact) return next(new AppError('Artifact not found.', 404));
+
+  const artifactUrl = artifact.artifactUrl.split('/');
+  const cloudId = artifactUrl[artifactUrl.length - 1].split('.')[0];
+
+  await cloudinary.uploader.destroy(`virtuavisage-generations/${cloudId}`);
+
+  res.status(204).json({
+    status: 'success',
+    data: {
+      artifact
+    }
+  });
+});
+
 exports.getPublicArtifacts = catchAsync(async (req, res, next) => {
+  const artifacts = await Artifact.find({
+    isPublic: true
+  })
+    .populate('user')
+    .sort('-createdAt');
+
   res.status(200).json({
-    message: 'To set up.'
+    status: 'success',
+    data: {
+      artifacts
+    }
   });
 });
 
 exports.makePublic = catchAsync(async (req, res, next) => {
-  const { artifactId: id } = req.params;
+  const { id } = req.body;
   const { user } = req;
 
   const updatedArtifact = await Artifact.findOneAndUpdate(

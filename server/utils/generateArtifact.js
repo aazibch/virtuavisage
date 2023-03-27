@@ -21,18 +21,18 @@ const client = new GenerationServiceClient('https://grpc.stability.ai', {});
 
 // Make the request
 const generateArtifact = async (prompt) => {
-  const request = buildGenerationRequest('stable-diffusion-768-v2-1', {
+  const request = buildGenerationRequest('stable-diffusion-512-v2-1', {
     type: 'text-to-image',
     prompts: [
       {
         text: prompt
       }
     ],
-    width: 768,
-    height: 768,
+    width: 512,
+    height: 512,
     samples: 1,
     cfgScale: 13,
-    steps: 30,
+    steps: 25,
     sampler: Generation.DiffusionSampler.SAMPLER_K_DPMPP_2M
   });
 
