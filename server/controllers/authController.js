@@ -36,17 +36,35 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.authenticate = (req, res, next) => {
+exports.authenticateLocal = (req, res, next) => {
   passport.authenticate('local', function (err, user, info) {
     if (err) return next(err);
     if (!user) return next(info.error);
-    req.user = user;
+    req.login(user, (err) => {
+      next(err);
+    });
+    next();
+  })(req, res, next);
+};
+
+exports.authenticateGoogle = (req, res, next) => {
+  passport.authenticate('google', function (err, user, info) {
+    if (err) {
+      next(err);
+      // Redirect to generic auth error page.
+    }
+    req.login(user, (err) => {
+      if (err) {
+        next(err);
+        // Redirect to generic auth error page.
+      }
+    });
+    // Redirect to app home page.
     next();
   })(req, res, next);
 };
 
 exports.loginSuccess = (req, res, next) => {
-  // Reached upon successful login.
   res.status(200).json({
     status: 'success',
     message: 'You were logged in successfully.',
