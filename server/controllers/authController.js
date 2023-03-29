@@ -1,6 +1,7 @@
 const passport = require('passport');
 const catchAsync = require('../middleware/catchAsync');
 const filterObject = require('../utils/filterObject');
+const { clientUrl } = require('../constants/index');
 const AppError = require('../utils/AppError');
 const User = require('../models/User');
 
@@ -41,41 +42,33 @@ exports.authenticateLocal = (req, res, next) => {
     if (err) return next(err);
     if (!user) return next(info.error);
     req.login(user, (err) => {
-      next(err);
+      if (err) {
+        return next(err);
+      }
+      res.status(200).json({
+        status: 'success',
+        message: 'You were logged in successfully.',
+        data: {
+          user: req.user
+        }
+      });
     });
-    next();
   })(req, res, next);
 };
 
 exports.authenticateGoogle = (req, res, next) => {
   passport.authenticate('google', function (err, user, info) {
+    const authErrorUrl = `${clientUrl}/?alert_type="generic_auth_error"`;
     if (err) {
-      next(err);
-      // Redirect to generic auth error page.
+      return res.redirect(authErrorUrl);
     }
     req.login(user, (err) => {
       if (err) {
-        next(err);
-        // Redirect to generic auth error page.
+        return res.redirect(authErrorUrl);
       }
     });
-    // Redirect to app home page.
-    next();
+    return res.redirect(`${clientUrl}/?alert_type="auth_success"`);
   })(req, res, next);
-};
-
-exports.loginSuccess = (req, res, next) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'You were logged in successfully.',
-    data: {
-      user: req.user
-    }
-  });
-};
-
-exports.loginFailure = (req, res, next) => {
-  return next(new AppError('User not found.', 404));
 };
 
 exports.protect = (req, res, next) => {
