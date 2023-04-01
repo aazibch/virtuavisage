@@ -6,7 +6,7 @@ import { getRandomPrompt } from '../utils';
 import { FormField, Loader } from '../components';
 import { urlBase } from '../constants';
 
-const CreatePost = () => {
+const CreatePage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
@@ -155,4 +155,4 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default CreatePage;

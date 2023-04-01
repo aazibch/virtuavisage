@@ -11,7 +11,7 @@ const Header = () => {
         <Button
           elementType="link"
           styleType="primary"
-          linkProps={{ to: '/create-post' }}
+          linkProps={{ to: '/auth/login' }}
         >
           Login
         </Button>

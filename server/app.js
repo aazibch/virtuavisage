@@ -30,8 +30,8 @@ const artifactsRoutes = require('./routes/artifactsRoutes');
 // const stableDiffusionRoutes = require('./routes/stableDiffusionRoutes.js');
 const globalErrorHandler = require('./middleware/error');
 
-app.use('/api/v1/users', usersRoutes);
-app.use('/api/v1/artifacts', artifactsRoutes);
+app.use('/v1/users', usersRoutes);
+app.use('/v1/artifacts', artifactsRoutes);
 // app.use('/api/v1/post', postsRoutes);
 // app.use('/api/v1/stable', stableDiffusionRoutes);
 app.use(globalErrorHandler);

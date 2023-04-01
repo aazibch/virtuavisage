@@ -1,6 +1,14 @@
 import { Link } from 'react-router-dom';
 
-const Button = ({ children, onClick, elementType, styleType, linkProps }) => {
+const Button = ({
+  children,
+  onClick,
+  className,
+  type,
+  elementType,
+  styleType,
+  linkProps
+}) => {
   let textClass = 'text-gray-500';
   let bgClass = 'bg-[#ececf1]';
 
@@ -9,21 +17,17 @@ const Button = ({ children, onClick, elementType, styleType, linkProps }) => {
     bgClass = 'bg-[#6469ff]';
   }
 
+  const classNames = `${bgClass} ${textClass} font-inter font-medium px-4 py-2 rounded-md text-center ${className}`;
+
   let element = (
-    <button
-      onClick={onClick}
-      className={`${bgClass} ${textClass} font-inter font-medium px-4 py-2 rounded-md`}
-    >
+    <button type={type} onClick={onClick} className={classNames}>
       {children}
     </button>
   );
 
   if (elementType === 'link') {
     element = (
-      <Link
-        {...linkProps}
-        className={`${bgClass} ${textClass} font-inter font-medium px-4 py-2 rounded-md`}
-      >
+      <Link {...linkProps} className={classNames}>
         {children}
       </Link>
     );
