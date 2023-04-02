@@ -1,6 +1,8 @@
-import { Input, Button, FormField } from '../index';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../store/auth';
+import { Input, Button } from '../index';
 
 const validationSchema = yup.object({
   email: yup
@@ -19,6 +21,8 @@ const validationSchema = yup.object({
 });
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -27,7 +31,8 @@ const LoginForm = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       formik.resetForm();
-      console.log(values);
+      console.log('submit');
+      dispatch(authActions.login({ name: 'John Doe', age: '12' }));
     }
   });
 
