@@ -5,8 +5,8 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const usersController = require('../controllers/usersControlller');
 
-router.route('/signup').post(authController.signup);
-router.route('/login').post(authController.authenticateLocal);
+router.route('/auth/signup').post(authController.signup);
+router.route('/auth/login').post(authController.authenticateLocal);
 
 router
   .route('/auth/google')

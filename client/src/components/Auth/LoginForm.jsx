@@ -2,7 +2,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { authActions } from '../../store/auth';
-import { Input, Button } from '../index';
+import { Input, Button, Loader } from '../index';
+import { useHttp } from '../../hooks';
+import { urlBase } from '../../constants';
+import { useNavigate } from 'react-router-dom';
+import Modal from '../UI/Modal/Modal';
 
 const validationSchema = yup.object({
   email: yup
@@ -22,6 +26,8 @@ const validationSchema = yup.object({
 
 const LoginForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoading, error, sendRequest, dismissErrorHandler } = useHttp();
 
   const formik = useFormik({
     initialValues: {
@@ -30,13 +36,29 @@ const LoginForm = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      sendData(values);
       formik.resetForm();
-      console.log('submit');
-      dispatch(authActions.login({ name: 'John Doe', age: '12' }));
     }
   });
 
-  return (
+  const sendData = (values) => {
+    const requestConfig = {
+      url: `${urlBase}/v1/users/auth/login`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: values
+    };
+
+    const handleResponse = (response) => {
+      console.log('[handleResponse]', response);
+      dispatch(authActions.login(response.data.user));
+      navigate('/');
+    };
+
+    sendRequest(requestConfig, handleResponse);
+  };
+
+  let content = (
     <form className="mb-5" onSubmit={formik.handleSubmit}>
       <Input
         error={formik.touched.email && formik.errors.email}
@@ -63,6 +85,27 @@ const LoginForm = () => {
         Login
       </Button>
     </form>
+  );
+
+  if (isLoading) {
+    content = (
+      <div className="flex justify-center items-center my-20">
+        <Loader />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {error && (
+        <Modal
+          heading="Error"
+          content={error}
+          dismissModalHandler={dismissErrorHandler}
+        />
+      )}
+      {content}
+    </>
   );
 };
 
