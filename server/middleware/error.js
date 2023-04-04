@@ -1,4 +1,5 @@
 const AppError = require('../utils/AppError');
+const { apiUrl } = require('../constants');
 
 const getCastError = (err) => {
   const message = `Invalid value "${err.value}" for the path "${err.path}".`;
@@ -31,30 +32,16 @@ const getValidationError = (err) => {
 };
 
 const sendError = (err, req, res) => {
-  if (req.originalUrl.startsWith('/api')) {
-    console.log('err', err);
-    if (err.isOperational) {
-      return res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message
-      });
-    }
-
-    return res.status(500).json({
-      status: 'error',
-      message: 'Something went wrong.'
-    });
-  }
-
+  console.log('err', err);
   if (err.isOperational) {
-    return res.status(err.statusCode).render('error', {
-      title: 'Error',
+    return res.status(err.statusCode).json({
+      status: err.status,
       message: err.message
     });
   }
 
-  return res.status(500).render('error', {
-    title: 'Error',
+  return res.status(500).json({
+    status: 'error',
     message: 'Something went wrong.'
   });
 };
@@ -62,11 +49,10 @@ const sendError = (err, req, res) => {
 module.exports = (err, req, res, next) => {
   const { originalUrl } = req;
 
-  if (err.name === 'CastError' && originalUrl.startsWith('/api'))
-    err = getCastError(err);
+  if (err.name === 'CastError') err = getCastError(err);
   if (err.code === 11000) {
     if (
-      originalUrl === '/api/v1/users/signup' &&
+      originalUrl === '/v1/users/auth/signup' &&
       Object.keys(err.keyPattern)[0] === 'email'
     ) {
       err = getDublicateFieldErrorForEmail(err);

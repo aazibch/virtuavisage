@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { authActions } from '../../store/auth';
 import { Input, Button, Loader } from '../index';
 import { useHttp } from '../../hooks';
-import { urlBase } from '../../constants';
+import { apiUrl } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../UI/Modal/Modal';
 
@@ -43,7 +43,7 @@ const LoginForm = () => {
 
   const sendData = (values) => {
     const requestConfig = {
-      url: `${urlBase}/v1/users/auth/login`,
+      url: `${apiUrl}/v1/users/auth/login`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: values

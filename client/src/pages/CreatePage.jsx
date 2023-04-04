@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
 import { FormField, Loader } from '../components';
-import { urlBase } from '../constants';
+import { apiUrl } from '../constants';
 
 const CreatePage = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const CreatePage = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch(`${urlBase}/api/v1/stable`, {
+        const response = await fetch(`${apiUrl}/v1/stable`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const CreatePage = () => {
       setLoading(true);
 
       try {
-        const response = await fetch(`${urlBase}/api/v1/post`, {
+        const response = await fetch(`${apiUrl}/v1/post`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

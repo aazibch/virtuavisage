@@ -1,7 +1,7 @@
 import { Button, LoginForm } from '../../components';
 import styles from './Auth.module.css';
 import { google } from '../../assets';
-import { urlBase } from '../../constants';
+import { apiUrl } from '../../constants';
 
 const LoginPage = () => {
   return (
@@ -15,7 +15,7 @@ const LoginPage = () => {
         <Button
           className="block w-full"
           elementType="link"
-          linkProps={{ to: `${urlBase}/v1/users/auth/google` }}
+          linkProps={{ to: `${apiUrl}/v1/users/auth/google` }}
         >
           <div className="flex justify-center items-center">
             <div className="mr-3">

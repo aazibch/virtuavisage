@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
+const apiUrl = require('../constants');
 
 passport.use(
   new LocalStrategy(
@@ -37,7 +38,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:8080/api/v1/users/auth/google/callback'
+      callbackURL: `${apiUrl}/v1/users/auth/google/callback`
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

@@ -1,10 +1,10 @@
 import { Button, SignupForm } from '../../components';
 import styles from './Auth.module.css';
 import { google } from '../../assets';
-import { urlBase } from '../../constants';
+import { apiUrl } from '../../constants';
 
 const SignupPage = () => {
-  console.log(urlBase);
+  console.log(apiUrl);
   return (
     <div className="border rounded-md border-gray-300 max-w-lg mx-auto p-10">
       <h1 className="font-semibold text-2xl mb-5">Signup</h1>
@@ -16,7 +16,7 @@ const SignupPage = () => {
         <Button
           className="block w-full"
           elementType="link"
-          linkProps={{ to: `${urlBase}/v1/users/auth/google` }}
+          linkProps={{ to: `${apiUrl}/v1/users/auth/google` }}
         >
           <div className="flex justify-center items-center">
             <div className="mr-3">
