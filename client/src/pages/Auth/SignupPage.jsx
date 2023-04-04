@@ -4,7 +4,6 @@ import { google } from '../../assets';
 import { apiUrl } from '../../constants';
 
 const SignupPage = () => {
-  console.log(apiUrl);
   return (
     <div className="border rounded-md border-gray-300 max-w-lg mx-auto p-10">
       <h1 className="font-semibold text-2xl mb-5">Signup</h1>

@@ -6,6 +6,7 @@ import LoginForm from './Auth/LoginForm';
 import SignupForm from './Auth/SignupForm';
 import Input from './UI/Input';
 import Button from './UI/Button';
+import Modal from './UI/Modal/Modal';
 
 export {
   Card,
@@ -15,5 +16,6 @@ export {
   LoginForm,
   SignupForm,
   Input,
-  Button
+  Button,
+  Modal
 };

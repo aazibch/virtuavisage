@@ -1,6 +1,12 @@
-import { Input, Button } from '../index';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Input, Button, Loader } from '../';
+import { useHttp } from '../../hooks';
+import { apiUrl } from '../../constants';
+import Modal from '../UI/Modal/Modal';
+import { authActions } from '../../store/auth';
 
 const validationSchema = yup.object({
   name: yup
@@ -28,6 +34,10 @@ const validationSchema = yup.object({
 });
 
 const SignupForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoading, error, sendRequest, dismissErrorHandler } = useHttp();
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -38,11 +48,27 @@ const SignupForm = () => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       formik.resetForm();
-      console.log(values);
+      sendData(values);
     }
   });
 
-  return (
+  const sendData = (values) => {
+    const requestConfig = {
+      url: `${apiUrl}/v1/users/auth/signup`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: values
+    };
+
+    const handleResponse = (response) => {
+      dispatch(authActions.login(response.data.user));
+      navigate('/');
+    };
+
+    sendRequest(requestConfig, handleResponse);
+  };
+
+  let content = (
     <form className="mb-5" onSubmit={formik.handleSubmit}>
       <Input
         className="mb-5"
@@ -95,6 +121,27 @@ const SignupForm = () => {
         Submit
       </Button>
     </form>
+  );
+
+  if (isLoading) {
+    content = (
+      <div className="flex justify-center items-center my-20">
+        <Loader />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {error && (
+        <Modal
+          heading="Error"
+          content={error}
+          dismissModalHandler={dismissErrorHandler}
+        />
+      )}
+      {content}
+    </>
   );
 };
 

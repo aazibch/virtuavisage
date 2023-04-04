@@ -49,6 +49,8 @@ const sendError = (err, req, res) => {
 module.exports = (err, req, res, next) => {
   const { originalUrl } = req;
 
+  console.log('err', err);
+
   if (err.name === 'CastError') err = getCastError(err);
   if (err.code === 11000) {
     if (

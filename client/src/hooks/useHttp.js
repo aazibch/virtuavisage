@@ -33,6 +33,7 @@ const useHttp = () => {
         handleResponse();
       }
     } catch (error) {
+      console.log('error', error);
       // The catch block is also run if you attempt to parse JSON via response.json()
       // while the response we get from the backend is in a different format.
       setError('Something went wrong!');
