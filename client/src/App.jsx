@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Home, CreatePage, LoginPage, SignupPage } from './pages';
+import { Home, CreatePage, LoginPage, SignupPage, AccountPage } from './pages';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/index';
 
@@ -9,6 +9,7 @@ const App = () => {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/account" element={<AccountPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/create-post" element={<CreatePage />} />

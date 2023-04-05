@@ -1,5 +1,5 @@
 import Card from './UI/Card';
-import FormField from './FormField';
+import FormField from './UI/FormField';
 import Loader from './UI/Loader';
 import Layout from './Layout/Layout';
 import LoginForm from './Auth/LoginForm';
@@ -7,6 +7,8 @@ import SignupForm from './Auth/SignupForm';
 import Input from './UI/Input';
 import Button from './UI/Button';
 import Modal from './UI/Modal/Modal';
+import Avatar from './UI/Avatar';
+import DropdownMenu from './UI/DropdownMenu';
 
 export {
   Card,
@@ -17,5 +19,7 @@ export {
   SignupForm,
   Input,
   Button,
-  Modal
+  Modal,
+  Avatar,
+  DropdownMenu
 };
