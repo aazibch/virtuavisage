@@ -14,6 +14,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     'passwordConfirmation'
   );
 
+  filteredBody.authType = 'local';
+
   const newUser = await User.create(filteredBody);
   newUser.password = undefined;
 

@@ -54,7 +54,13 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangeDate: Date,
   passwordResetToken: String,
-  passwordResetTokenExpirationDate: Date
+  passwordResetTokenExpirationDate: Date,
+  authType: {
+    type: mongoose.Schema.Types.String,
+    enum: ['google', 'local'],
+    required: true,
+    select: false
+  }
 });
 
 userSchema.pre('save', async function (next) {

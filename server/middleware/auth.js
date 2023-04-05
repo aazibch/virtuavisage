@@ -3,7 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
-const apiUrl = require('../constants');
+const { apiUrl } = require('../constants');
 
 passport.use(
   new LocalStrategy(
@@ -18,14 +18,19 @@ passport.use(
         });
       }
 
-      const user = await User.findOne({ email }).select('+password');
+      const user = await User.findOne({ email }).select('+password +authType');
 
-      if (!user || !(await user.isPasswordCorrect(password, user.password))) {
+      if (
+        !user ||
+        user.authType !== 'local' ||
+        !(await user.isPasswordCorrect(password, user.password))
+      ) {
         return done(null, false, {
           error: new AppError('Incorrect email address or password.', 401)
         });
       }
 
+      user.authType = undefined;
       user.password = undefined;
 
       return done(null, user);
@@ -43,15 +48,20 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         const user = await User.findOne({ email: profile.emails[0].value });
-        if (user) return done(null, user);
 
-        const newUser = await User.create({
-          name: profile.displayName,
-          email: profile.emails[0].value
-        });
+        if (user?.authType === 'google') return done(null, user);
 
-        done(null, newUser);
-        return done(null, profile);
+        if (!user || user.authType !== 'google') {
+          const newUser = await User.create({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            authType: 'google'
+          });
+
+          return done(null, newUser);
+        }
+
+        done(null, false);
       } catch (error) {
         done(error);
       }
