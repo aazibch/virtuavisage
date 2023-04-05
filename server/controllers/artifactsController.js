@@ -3,6 +3,7 @@ const catchAsync = require('../middleware/catchAsync');
 const AppError = require('../utils/AppError');
 const generateArtifact = require('../utils/generateArtifact');
 const Artifact = require('../models/Artifact');
+const User = require('../models/User');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,6 +15,12 @@ exports.createArtifact = catchAsync(async (req, res, next) => {
   const { prompt } = req.body;
 
   const artifact = await generateArtifact(prompt);
+
+  if (artifact) {
+    await User.findByIdAndUpdate(req.user, {
+      $inc: { artifactsGenerated: 1 }
+    });
+  }
 
   res.status(200).json({
     status: 'success',

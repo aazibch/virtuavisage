@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema(
         'The email address should be the minimum length of 5 characters.'
       ]
     },
+    artifactsGenerated: {
+      type: Number,
+      default: 0
+    },
     password: {
       type: String,
       minlength: [

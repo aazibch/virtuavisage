@@ -22,10 +22,13 @@ const AccountPage = () => {
           })}
         </p>
         <p>
-          <span className="font-medium">Artifacts Generated:</span> 10
+          <span className="font-medium">Artifacts Generated:</span>{' '}
+          {user.artifactsGenerated}
         </p>
       </div>
-      <Button>Logout</Button>
+      <Button elementType="link" linkProps={{ to: '/auth/logout' }}>
+        Logout
+      </Button>
     </div>
   );
 };
