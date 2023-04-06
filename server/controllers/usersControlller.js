@@ -5,7 +5,13 @@ const catchAsync = require('../middleware/catchAsync');
 exports.getMe = catchAsync(async (req, res, next) => {
   let user = await User.findById(req.user);
 
-  if (!user) return next(new AppError('No user found.', 404));
+  if (!user)
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        user: null
+      }
+    });
 
   res.status(200).json({
     status: 'success',

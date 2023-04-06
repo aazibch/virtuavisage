@@ -45,12 +45,16 @@ const LoginForm = () => {
     const requestConfig = {
       url: `${apiUrl}/v1/users/auth/login`,
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
       body: values
     };
 
     const handleResponse = (response) => {
-      console.log('[handleResponse]', response);
       dispatch(authActions.login(response.data.user));
       navigate('/');
     };

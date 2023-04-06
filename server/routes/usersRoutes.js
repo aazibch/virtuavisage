@@ -7,6 +7,7 @@ const usersController = require('../controllers/usersControlller');
 
 router.route('/auth/signup').post(authController.signup);
 router.route('/auth/login').post(authController.authenticateLocal);
+router.route('/auth/logout').get(authController.protect, authController.logout);
 
 router
   .route('/auth/google')
@@ -14,6 +15,6 @@ router
 
 router.route('/auth/google/callback').get(authController.authenticateGoogle);
 
-router.route('/me').get(authController.protect, usersController.getMe);
+router.route('/me').get(usersController.getMe);
 
 module.exports = router;

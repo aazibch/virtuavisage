@@ -20,7 +20,7 @@ const DropdownMenu = ({ buttonContent, items }) => {
       {isOpen && (
         <ul className="absolute border rounded right-0 top-8 min-w-[8rem] shadow-md text-gray-800 text-sm">
           {items.map((item) => (
-            <li className="border-b-1">
+            <li key={item.link} className="border-b-1">
               {' '}
               <Link
                 className="block p-2 border-b hover:bg-slate-100"

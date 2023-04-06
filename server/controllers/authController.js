@@ -68,8 +68,8 @@ exports.authenticateGoogle = (req, res, next) => {
       if (err) {
         return res.redirect(authErrorUrl);
       }
+      return res.redirect(`${clientUrl}/?alert_type="auth_success"`);
     });
-    return res.redirect(`${clientUrl}/?alert_type="auth_success"`);
   })(req, res, next);
 };
 
@@ -79,4 +79,17 @@ exports.protect = (req, res, next) => {
   }
 
   next(new AppError('You are not logged in.', 401));
+};
+
+exports.logout = (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'You were logged out successfully.'
+    });
+  });
 };
