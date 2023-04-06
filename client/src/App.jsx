@@ -6,17 +6,19 @@ import {
   LoginPage,
   SignupPage,
   AccountPage,
-  LogoutPage
+  LogoutPage,
+  NotFoundPage
 } from './pages';
 import { Route, Routes } from 'react-router-dom';
 import { Layout, Loader, Modal } from './components';
 import { useHttp } from './hooks';
 import { apiUrl } from './constants';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from './store/auth';
 
 const App = () => {
   const { isLoading, sendRequest } = useHttp();
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -43,15 +45,22 @@ const App = () => {
     getUser();
   }, []);
 
+  const authenticatedUserRoutes = (
+    <>
+      <Route path="/auth/logout" element={<LogoutPage />} />
+      <Route path="/account" element={<AccountPage />} />
+      <Route path="/create-post" element={<CreatePage />} />
+    </>
+  );
+
   let content = (
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/account" element={<AccountPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
-        <Route path="/auth/logout" element={<LogoutPage />} />
-        <Route path="/create-post" element={<CreatePage />} />
+        {user && authenticatedUserRoutes}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>
   );
