@@ -7,20 +7,28 @@ const Button = ({
   type,
   elementType,
   styleType,
-  linkProps
+  linkProps,
+  disabled
 }) => {
-  let textClass = 'text-gray-500';
-  let bgClass = 'bg-[#ececf1]';
+  let textClass = 'text-gray-600';
+  let bgClass = 'bg-white';
 
   if (styleType === 'primary') {
     textClass = 'text-white';
     bgClass = 'bg-[#6469ff]';
   }
 
-  const classNames = `${bgClass} ${textClass} font-inter font-medium px-4 py-2 rounded-md text-center ${className}`;
+  const classNames = `${bgClass} ${textClass} font-inter px-4 py-2 rounded-md text-center disabled:opacity-50 border border-gray-300 ${
+    className ? className : ''
+  }`;
 
   let element = (
-    <button type={type} onClick={onClick} className={classNames}>
+    <button
+      disabled={disabled}
+      type={type}
+      onClick={onClick}
+      className={classNames}
+    >
       {children}
     </button>
   );

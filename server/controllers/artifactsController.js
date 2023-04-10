@@ -32,6 +32,7 @@ exports.createArtifact = catchAsync(async (req, res, next) => {
 });
 
 exports.saveArtifactToCollection = catchAsync(async (req, res, next) => {
+  console.log('saveArtifactToCollection', req.body.artifact.length);
   const { prompt, artifact } = req.body;
   const { user } = req;
 

@@ -7,19 +7,29 @@ const Header = () => {
   const user = useSelector((state) => state.user);
 
   return (
-    <header className="w-full flex justify-between items-center bg-white sm:px-8 px-4 py-4 border-bottom border-b-[#e6ebf4]">
-      <Link to="/">
+    <header className="w-full flex items-center bg-white sm:px-8 px-4 py-4 border-bottom border-b-[#e6ebf4]">
+      <Link className="inline" to="/">
         <h1 className="font-semibold">VirtuaVisage</h1>
       </Link>
-      <div>
+      <div className="ml-auto flex items-center">
         {user ? (
-          <DropdownMenu
-            buttonContent={<Avatar content={user.name[0]} />}
-            items={[
-              { content: 'Account', link: '/account' },
-              { content: 'Logout', link: '/auth/logout' }
-            ]}
-          />
+          <>
+            <Button
+              className="mr-4"
+              elementType="link"
+              styleType="primary"
+              linkProps={{ to: '/create' }}
+            >
+              Create
+            </Button>
+            <DropdownMenu
+              buttonContent={<Avatar content={user.name[0]} />}
+              items={[
+                { content: 'Account', link: '/account' },
+                { content: 'Logout', link: '/auth/logout' }
+              ]}
+            />
+          </>
         ) : (
           <Button
             elementType="link"

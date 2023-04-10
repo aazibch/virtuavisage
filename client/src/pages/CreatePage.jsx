@@ -1,84 +1,158 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
-import { FormField, Loader } from '../components';
+import { Loader, Input, Button, Modal } from '../components';
 import { apiUrl } from '../constants';
+import { useHttp } from '../hooks';
+
+const validationSchema = yup.object({
+  prompt: yup
+    .string('Please provide a valid prompt.')
+    .required('Please provide a prompt.')
+});
 
 const CreatePage = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: '',
-    prompt: '',
-    photo: ''
+  const [artifact, setArtifact] = useState(null);
+  const [isArtifactMaximized, setIsArtifactMaximized] = useState(null);
+  const {
+    error: generateError,
+    isLoading: isGenerating,
+    sendRequest: sendGenerateRequest,
+    dismissErrorHandler: dismissGenerateError
+  } = useHttp();
+  const {
+    error: saveError,
+    isLoading: isSaving,
+    sendRequest: sendSaveRequest,
+    dismissErrorHandler: dismissSaveError
+  } = useHttp();
+
+  const formik = useFormik({
+    initialValues: {
+      prompt: ''
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      generateArtifact(values);
+    }
   });
-  const [generatingImg, setGeneratingImg] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const generateImage = async () => {
-    if (form.prompt) {
-      try {
-        setGeneratingImg(true);
-        const response = await fetch(`${apiUrl}/v1/stable`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: form.prompt })
-        });
+  const generateArtifact = async (values) => {
+    setArtifact(null);
+    const requestConfig = {
+      url: `${apiUrl}/v1/artifacts`,
+      method: 'POST',
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: values
+    };
 
-        const data = await response.json();
+    const handleResponse = (response) => {
+      setArtifact({
+        image: `data:image/png;base64,${response.data.artifact}`,
+        prompt: response.data.prompt
+      });
+    };
 
-        setForm({ ...form, photo: `data:image/png;base64,${data.photo}` });
-      } catch (error) {
-        alert(error);
-      } finally {
-        setGeneratingImg(false);
-      }
-    } else {
-      alert('Please enter a prompt');
-    }
+    sendGenerateRequest(requestConfig, handleResponse);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (form.prompt && form.photo) {
-      setLoading(true);
-
-      try {
-        const response = await fetch(`${apiUrl}/v1/post`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(form)
-        });
-
-        await response.json();
-        navigate('/');
-      } catch (error) {
-        alert(error);
-      } finally {
-        setLoading(false);
+  const saveArtifact = async () => {
+    const requestConfig = {
+      url: `${apiUrl}/v1/artifacts/collection`,
+      method: 'POST',
+      withCredentials: true,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: {
+        prompt: artifact.prompt,
+        artifact: artifact.image
       }
-    } else {
-      alert('Please enter a prompt and generate an image');
-    }
-  };
+    };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const handleResponse = (response) => {
+      console.log('response', response);
+      // navigate('/');
+    };
+
+    sendSaveRequest(requestConfig, handleResponse);
   };
 
   const handleSurpriseMe = () => {
-    const randomPrompt = getRandomPrompt(form.prompt);
-    setForm({ ...form, prompt: randomPrompt });
+    const randomPrompt = getRandomPrompt(formik.values.prompt);
+    formik.setFieldValue('prompt', randomPrompt);
   };
+
+  const openMaximizedArtifact = () => {
+    setIsArtifactMaximized(true);
+  };
+
+  const closeMaximizedArtifact = () => {
+    setIsArtifactMaximized(false);
+  };
+
+  let maximizedArtifact;
+
+  if (isArtifactMaximized) {
+    maximizedArtifact = (
+      <Modal
+        heading="Artifact"
+        contentType="artifact"
+        content={
+          <>
+            <img
+              src={artifact.image}
+              alt={artifact.prompt}
+              className="w-full h-full object-contain"
+            />
+            <p className="mt-3">{artifact.prompt}</p>
+          </>
+        }
+        dismissModalHandler={closeMaximizedArtifact}
+      />
+    );
+  }
+
+  let error;
+
+  console.log('generateError', generateError);
+
+  if (generateError) {
+    error = (
+      <Modal
+        heading="Error"
+        content={generateError}
+        dismissModalHandler={dismissGenerateError}
+      />
+    );
+  }
+
+  if (saveError) {
+    error = (
+      <Modal
+        heading="Error"
+        content={saveError}
+        dismissModalHandler={dismissSaveError}
+      />
+    );
+  }
 
   return (
     <section className="max-w-7xl mx-auto">
+      {error}
+      {maximizedArtifact}
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
         <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">
@@ -86,32 +160,32 @@ const CreatePage = () => {
           and share them with the community.
         </p>
       </div>
-      <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-5">
-          <FormField
-            labelName="Your Name"
-            type="text"
-            name="name"
-            placeholder="John Doe"
-            value={form.name}
-            handleChange={handleChange}
-          />
-          <FormField
-            labelName="Prompt"
-            type="text"
-            name="prompt"
-            placeholder="A plush toy robot sitting against a yellow wall"
-            value={form.prompt}
-            handleChange={handleChange}
+      <form className="mt-16 max-w-3xl" onSubmit={formik.handleSubmit}>
+        <div className="flex flex-col gap-1">
+          <Input
+            label="Prompt"
             isSurpriseMe
             handleSurpriseMe={handleSurpriseMe}
+            error={formik.touched.prompt && formik.errors.prompt}
+            input={{
+              type: 'text',
+              name: 'prompt',
+              placeholder: 'A plush toy robot sitting against a yellow wall',
+              value: formik.values.prompt,
+              onChange: formik.handleChange
+            }}
           />
 
-          <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
-            {form.photo ? (
+          <div
+            onClick={artifact ? openMaximizedArtifact : null}
+            className={`relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 max-w-lg p-3 flex justify-center items-center ${
+              artifact ? 'cursor-pointer' : 'cursor-auto'
+            }`}
+          >
+            {artifact ? (
               <img
-                src={form.photo}
-                alt={form.prompt}
+                src={artifact.image}
+                alt={artifact.prompt}
                 className="w-full h-full object-contain"
               />
             ) : (
@@ -122,33 +196,32 @@ const CreatePage = () => {
               />
             )}
 
-            {generatingImg && (
+            {isGenerating && (
               <div className="absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg">
                 <Loader />
               </div>
             )}
           </div>
         </div>
-        <div className="mt-5 flex gap-5">
-          <button
-            type="button"
-            onClick={generateImage}
-            className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-          >
-            {generatingImg ? 'Generating...' : 'Generate'}
-          </button>
-        </div>
-        <div className="mt-10">
-          <p className="mt-2 text-[#666e75] text-[14px]">
-            Once you have created the image you want, you can share it with
-            others in the community.
-          </p>
-          <button
+        <div className="mt-5">
+          <Button
+            className="mr-1"
+            disabled={isGenerating}
             type="submit"
-            className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            styleType="primary"
           >
-            {loading ? 'Sharing...' : 'Share with the community'}
-          </button>
+            Generate
+          </Button>
+          {artifact && (
+            <Button
+              type="button"
+              className="mt-3"
+              disabled={isSaving}
+              onClick={saveArtifact}
+            >
+              Save
+            </Button>
+          )}
         </div>
       </form>
     </section>

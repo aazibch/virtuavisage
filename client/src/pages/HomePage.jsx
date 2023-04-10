@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader, Card, FormField } from '../components';
+import { Loader, Card, FormField, Input } from '../components';
 import { apiUrl } from '../constants';
 
 const RenderCards = ({ data, title }) => {
@@ -74,13 +74,15 @@ const Home = () => {
         </p>
       </div>
       <div className="mt-16">
-        <FormField
-          labelName="Search posts"
-          type="text"
-          name="text"
-          placeholder="Search posts"
-          value={searchText}
-          handleChange={handleSearchChange}
+        <Input
+          label="Search Posts"
+          input={{
+            type: 'text',
+            name: 'text',
+            placeholder: 'Search posts',
+            value: searchText,
+            onChange: handleSearchChange
+          }}
         />
       </div>
 

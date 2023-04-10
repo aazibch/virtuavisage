@@ -18,7 +18,7 @@ const DropdownMenu = ({ buttonContent, items }) => {
     <div ref={dropdownRef} className="relative">
       <button onClick={toggleMenuHandler}>{buttonContent}</button>
       {isOpen && (
-        <ul className="absolute border rounded right-0 top-8 min-w-[8rem] shadow-md text-gray-800 text-sm">
+        <ul className="absolute border rounded right-0 top-9 min-w-[8rem] shadow-md text-gray-800 text-sm bg-white">
           {items.map((item) => (
             <li key={item.link} className="border-b-1">
               {' '}

@@ -49,7 +49,7 @@ const App = () => {
     <>
       <Route path="/auth/logout" element={<LogoutPage />} />
       <Route path="/account" element={<AccountPage />} />
-      <Route path="/create-post" element={<CreatePage />} />
+      <Route path="/create" element={<CreatePage />} />
     </>
   );
 
