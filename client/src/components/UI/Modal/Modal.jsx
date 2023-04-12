@@ -12,8 +12,7 @@ const Modal = ({
   confirmModalHandler,
   dismissModalHandler,
   dropdownItems,
-  modalZindex,
-  backdropZindex
+  overlaid
 }) => {
   let topOffsetClass = 'top-[20vh]';
   let zIndexClass = 'z-20';
@@ -22,8 +21,8 @@ const Modal = ({
     topOffsetClass = 'top-[5vh]';
   }
 
-  if (modalZindex) {
-    zIndexClass = `z-${modalZindex}`;
+  if (overlaid) {
+    zIndexClass = 'z-30';
   }
 
   const modal = (
@@ -68,7 +67,7 @@ const Modal = ({
   return (
     <>
       {createPortal(
-        <Backdrop zIndex={backdropZindex} onClick={dismissModalHandler} />,
+        <Backdrop overlaid={overlaid} onClick={dismissModalHandler} />,
         document.querySelector('#backdrop-root')
       )}
       {createPortal(modal, document.querySelector('#overlay-root'))}

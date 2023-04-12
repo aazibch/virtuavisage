@@ -1,8 +1,8 @@
-const Backdrop = ({ onClick, zIndex }) => {
+const Backdrop = ({ onClick, overlaid }) => {
   let zIndexClass = 'z-10';
 
-  if (zIndex) {
-    zIndexClass = `z-${zIndex}`;
+  if (overlaid) {
+    zIndexClass = 'z-20';
   }
 
   return (

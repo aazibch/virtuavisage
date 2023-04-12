@@ -203,21 +203,13 @@ const CollectionPage = () => {
   let errorModal;
 
   if (artifactsError) {
-    errorModal = (
-      <Modal
-        modalZindex="40"
-        backdropZindex="30"
-        heading="Error"
-        content={artifactsError}
-      />
-    );
+    errorModal = <Modal heading="Error" content={artifactsError} />;
   }
 
   if (maximizedArtifactError) {
     errorModal = (
       <Modal
-        modalZindex="40"
-        backdropZindex="30"
+        overlaid
         heading="Error"
         content={maximizedArtifactError}
         dismissModalHandler={dismissMaximizedArtifactError}
@@ -248,7 +240,7 @@ const CollectionPage = () => {
     );
   }
 
-  if (!formikSearchText && artifacts?.length > 0) {
+  if (!searchResults && artifacts?.length > 0) {
     artifactsContent = artifacts.map((artifact) => (
       <Card
         onClick={(e) => cardClickHandler(e, artifact._id)}
@@ -261,7 +253,7 @@ const CollectionPage = () => {
     ));
   }
 
-  if (!formikSearchText && artifacts?.length === 0) {
+  if (!searchResults && artifacts?.length === 0) {
     artifactsContent = (
       <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
         No posts found
