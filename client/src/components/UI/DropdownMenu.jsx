@@ -16,19 +16,35 @@ const DropdownMenu = ({ buttonContent, items }) => {
 
   return (
     <div ref={dropdownRef} className="relative">
-      <button onClick={toggleMenuHandler}>{buttonContent}</button>
+      <button
+        className={`hover:opacity-70 ${isOpen ? 'opacity-70' : ''}`}
+        onClick={toggleMenuHandler}
+      >
+        {buttonContent}
+      </button>
       {isOpen && (
-        <ul className="absolute border rounded right-0 top-9 min-w-[8rem] shadow-md text-gray-800 text-sm bg-white">
+        <ul className="absolute border rounded right-0 top-8 min-w-max z-50 shadow-md text-gray-800 text-sm bg-white">
           {items.map((item) => (
-            <li key={item.link} className="border-b-1">
-              {' '}
-              <Link
-                className="block p-2 border-b hover:bg-slate-100"
-                to={item.link}
-                onClick={toggleMenuHandler}
-              >
-                {item.content}
-              </Link>{' '}
+            <li key={item.content} className="border-b-1">
+              {item.link ? (
+                <Link
+                  className="block p-2 border-b hover:bg-slate-100"
+                  to={item.link}
+                  onClick={toggleMenuHandler}
+                >
+                  {item.content}
+                </Link>
+              ) : (
+                <span
+                  className="block p-2 border-b hover:bg-slate-100 cursor-pointer"
+                  onClick={() => {
+                    item.onClick();
+                    toggleMenuHandler();
+                  }}
+                >
+                  {item.content}
+                </span>
+              )}
             </li>
           ))}
         </ul>

@@ -31,8 +31,18 @@ exports.createArtifact = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getCollectedArtifacts = catchAsync(async (req, res, next) => {
+  const artifacts = await Artifact.find().populate('user');
+
+  res.status(200).json({
+    success: true,
+    data: {
+      artifacts
+    }
+  });
+});
+
 exports.saveArtifactToCollection = catchAsync(async (req, res, next) => {
-  console.log('saveArtifactToCollection', req.body.artifact.length);
   const { prompt, artifact } = req.body;
   const { user } = req;
 
@@ -93,6 +103,8 @@ exports.makePublic = catchAsync(async (req, res, next) => {
   const { id } = req.body;
   const { user } = req;
 
+  throw new Error('Something mega wrong');
+
   const updatedArtifact = await Artifact.findOneAndUpdate(
     {
       _id: id,
@@ -102,7 +114,7 @@ exports.makePublic = catchAsync(async (req, res, next) => {
       isPublic: true
     },
     { new: true, runValidators: true }
-  );
+  ).populate('user');
 
   if (!updatedArtifact) {
     return next(new AppError('Artifact not found', 404));

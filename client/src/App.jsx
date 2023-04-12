@@ -7,10 +7,11 @@ import {
   SignupPage,
   AccountPage,
   LogoutPage,
-  NotFoundPage
+  NotFoundPage,
+  CollectionPage
 } from './pages';
 import { Route, Routes } from 'react-router-dom';
-import { Layout, Loader, Modal } from './components';
+import { Layout, Loader } from './components';
 import { useHttp } from './hooks';
 import { apiUrl } from './constants';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,6 +51,7 @@ const App = () => {
       <Route path="/auth/logout" element={<LogoutPage />} />
       <Route path="/account" element={<AccountPage />} />
       <Route path="/create" element={<CreatePage />} />
+      <Route path="/collection" element={<CollectionPage />} />
     </>
   );
 

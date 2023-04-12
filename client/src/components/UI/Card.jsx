@@ -3,12 +3,13 @@ import React from 'react';
 import { download } from '../../assets';
 import { downloadImage } from '../../utils';
 
-const Card = ({ _id, name, prompt, photo }) => {
+const Card = ({ id, name, prompt, artifact, onClick }) => {
   return (
     <div className="rounded-xl group relative shadow-card hover:shadow-cardhover card ">
       <img
-        className="w-full h-auto object-cover rounded-xl"
-        src={photo}
+        onClick={onClick}
+        className="w-full h-auto object-cover rounded-xl cursor-pointer"
+        src={artifact}
         alt={prompt}
       />
 
@@ -23,7 +24,10 @@ const Card = ({ _id, name, prompt, photo }) => {
           </div>
           <button
             type="button"
-            onClick={() => downloadImage(_id, photo)}
+            onClick={() => {
+              console.log(id);
+              downloadImage(id, artifact);
+            }}
             className="outline-none bg-transparent border-none"
           >
             <img

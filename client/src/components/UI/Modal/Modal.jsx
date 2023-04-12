@@ -1,26 +1,49 @@
 import { createPortal } from 'react-dom';
-import Button from '../Button';
-import Backdrop from './Backdrop';
+// import Button from '../Button';
+// import Backdrop from './Backdrop';
+import { Button, Backdrop, DropdownMenu } from '../../';
+import { dots } from '../../../assets';
 
 const Modal = ({
   heading,
+  headerContent,
   content,
   contentType,
   confirmModalHandler,
-  dismissModalHandler
+  dismissModalHandler,
+  dropdownItems,
+  modalZindex,
+  backdropZindex
 }) => {
   let topOffsetClass = 'top-[20vh]';
+  let zIndexClass = 'z-20';
 
   if (contentType === 'artifact') {
-    topOffsetClass = 'top-[10vh]';
+    topOffsetClass = 'top-[5vh]';
+  }
+
+  if (modalZindex) {
+    zIndexClass = `z-${modalZIndex}`;
   }
 
   const modal = (
     <div
-      className={`fixed ${topOffsetClass} left-[5%] w-[90%] z-20 overflow-hidden bg-white border rounded shadow-lg md:w-[40rem] md:left-[calc(50%-20rem)]`}
+      className={`fixed ${topOffsetClass} left-[5%] w-[90%] ${zIndexClass} overflow-hidden bg-white border rounded shadow-lg md:w-[40rem] md:left-[calc(50%-20rem)]`}
     >
-      <div className="border-b overflow-auto p-3">
-        <h2 className="font-semibold text-2xl">{heading}</h2>
+      <div className="flex items-center border-b p-3">
+        {headerContent ? (
+          headerContent
+        ) : (
+          <h2 className="font-semibold text-2xl">{heading}</h2>
+        )}
+        {dropdownItems && (
+          <div className="ml-auto flex items-center">
+            <DropdownMenu
+              buttonContent={<img className="w-8" src={dots} />}
+              items={dropdownItems}
+            />
+          </div>
+        )}
       </div>
       <div className="p-3">{content}</div>
       <div className="flex justify-end border-t overflow-auto p-3">
@@ -43,7 +66,7 @@ const Modal = ({
   return (
     <>
       {createPortal(
-        <Backdrop onClick={dismissModalHandler} />,
+        <Backdrop zIndex={backdropZindex} onClick={dismissModalHandler} />,
         document.querySelector('#backdrop-root')
       )}
       {createPortal(modal, document.querySelector('#overlay-root'))}

@@ -1,6 +1,6 @@
 import Button from '../UI/Button';
 import { Avatar, DropdownMenu } from '../';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const Header = () => {
@@ -8,9 +8,26 @@ const Header = () => {
 
   return (
     <header className="w-full flex items-center bg-white sm:px-8 px-4 py-4 border-bottom border-b-[#e6ebf4]">
-      <Link className="inline" to="/">
+      <NavLink className="inline mr-5" to="/">
         <h1 className="font-semibold">VirtuaVisage</h1>
-      </Link>
+      </NavLink>
+      {user && (
+        <ul>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                `hover:text-gray-700 ${
+                  isActive ? 'text-gray-700' : 'text-gray-500'
+                }`
+              }
+              to="/collection"
+            >
+              Collection
+            </NavLink>
+          </li>
+        </ul>
+      )}
+
       <div className="ml-auto flex items-center">
         {user ? (
           <>

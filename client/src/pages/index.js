@@ -5,6 +5,7 @@ import CreatePage from './CreatePage';
 import AccountPage from './AccountPage';
 import LogoutPage from './Auth/LogoutPage';
 import NotFoundPage from './NotFoundPage';
+import CollectionPage from './CollectionPage';
 
 export {
   Home,
@@ -13,5 +14,6 @@ export {
   CreatePage,
   AccountPage,
   LogoutPage,
-  NotFoundPage
+  NotFoundPage,
+  CollectionPage
 };

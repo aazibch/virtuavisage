@@ -1,7 +1,7 @@
 import FileSaver from 'file-saver';
 import { surpriseMePrompts } from '../constants';
 
-export function getRandomPrompt(prompt) {
+export const getRandomPrompt = (prompt) => {
   const randomIndex = Math.floor(Math.random() * surpriseMePrompts.length);
   const randomPrompt = surpriseMePrompts[randomIndex];
 
@@ -10,8 +10,22 @@ export function getRandomPrompt(prompt) {
   if (randomPrompt === prompt) return getRandomPrompt(prompt);
 
   return randomPrompt;
-}
+};
 
-export async function downloadImage(_id, photo) {
-  FileSaver.saveAs(photo, `download-${_id}.png`);
-}
+export const downloadImage = async (_id, artifactUrl) => {
+  FileSaver.saveAs(artifactUrl, `download-${_id}.png`);
+};
+
+export const generateHttpConfig = (url, method, allowCredentials, body) => {
+  return {
+    url,
+    method,
+    withCredentials: allowCredentials,
+    credentials: allowCredentials ? 'include' : undefined,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: body ? body : undefined
+  };
+};

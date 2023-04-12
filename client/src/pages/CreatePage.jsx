@@ -127,8 +127,6 @@ const CreatePage = () => {
 
   let error;
 
-  console.log('generateError', generateError);
-
   if (generateError) {
     error = (
       <Modal

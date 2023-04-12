@@ -10,7 +10,8 @@ router
 
 router
   .route('/collection')
-  .post(authController.protect, artifactsController.saveArtifactToCollection);
+  .post(authController.protect, artifactsController.saveArtifactToCollection)
+  .get(authController.protect, artifactsController.getCollectedArtifacts);
 
 router
   .route('/collection/:artifactId')
