@@ -23,7 +23,7 @@ const Modal = ({
   }
 
   if (modalZindex) {
-    zIndexClass = `z-${modalZIndex}`;
+    zIndexClass = `z-${modalZindex}`;
   }
 
   const modal = (
@@ -46,20 +46,22 @@ const Modal = ({
         )}
       </div>
       <div className="p-3">{content}</div>
-      <div className="flex justify-end border-t overflow-auto p-3">
-        {confirmModalHandler && (
-          <Button
-            className="mr-2"
-            styleType="primary"
-            onClick={props.confirmModalHandler}
-          >
-            Confirm
-          </Button>
-        )}
-        {dismissModalHandler && (
-          <Button onClick={dismissModalHandler}>Close</Button>
-        )}
-      </div>
+      {(confirmModalHandler || dismissModalHandler) && (
+        <div className="flex justify-end border-t overflow-auto p-3">
+          {confirmModalHandler && (
+            <Button
+              className="mr-2"
+              styleType="primary"
+              onClick={props.confirmModalHandler}
+            >
+              Confirm
+            </Button>
+          )}
+          {dismissModalHandler && (
+            <Button onClick={dismissModalHandler}>Close</Button>
+          )}
+        </div>
+      )}
     </div>
   );
 

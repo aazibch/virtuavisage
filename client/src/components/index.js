@@ -10,6 +10,7 @@ import Modal from './UI/Modal/Modal';
 import Avatar from './UI/Avatar';
 import DropdownMenu from './UI/DropdownMenu';
 import Backdrop from './UI/Modal/Backdrop';
+import ArtifactModal from './Artifact/ArtifactModal';
 
 export {
   Card,
@@ -23,5 +24,6 @@ export {
   Modal,
   Avatar,
   Backdrop,
-  DropdownMenu
+  DropdownMenu,
+  ArtifactModal
 };

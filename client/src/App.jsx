@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Home,
@@ -18,11 +18,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from './store/auth';
 
 const App = () => {
-  const { isLoading, sendRequest } = useHttp();
+  const [isLoading, setIsLoading] = useState(true);
+  const { sendRequest } = useHttp();
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setIsLoading(true);
     const getUser = () => {
       const requestConfig = {
         url: `${apiUrl}/v1/users/me`,
@@ -38,6 +40,7 @@ const App = () => {
         if (response.data.user) {
           dispatch(authActions.login(response.data.user));
         }
+        setIsLoading(false);
       };
 
       sendRequest(requestConfig, handleResponse);

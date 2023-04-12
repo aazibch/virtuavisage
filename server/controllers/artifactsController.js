@@ -103,8 +103,6 @@ exports.makePublic = catchAsync(async (req, res, next) => {
   const { id } = req.body;
   const { user } = req;
 
-  throw new Error('Something mega wrong');
-
   const updatedArtifact = await Artifact.findOneAndUpdate(
     {
       _id: id,

@@ -1,19 +1,20 @@
-import { Input, Card, Modal, Avatar, Loader } from '../components';
+import { useFormik } from 'formik';
+import { Input, Card, Modal, Loader, ArtifactModal } from '../components';
 import { useHttp } from '../hooks';
 import { useEffect, useState } from 'react';
 import { apiUrl } from '../constants';
 import { generateHttpConfig, downloadImage } from '../utils';
 
 const CollectionPage = () => {
+  const [areArtifactsLoading, setAreArtifactsLoading] = useState(true);
   const [artifacts, setArtifacts] = useState(null);
-  const [maximizedArtifact, setMaximizedArtifact] = useState();
-  const [searchText, setSearchText] = useState('');
-  const {
-    error: artifactsError,
-    isLoading: areArtifactsLoading,
-    sendRequest: sendArtifactsRequest,
-    dismissErrorHandler: dismissArtifactsErrorHandler
-  } = useHttp();
+  const [maximizedArtifact, setMaximizedArtifact] = useState(null);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchResults, setSearchResults] = useState(null);
+
+  const { error: artifactsError, sendRequest: sendArtifactsRequest } =
+    useHttp();
+
   const {
     error: maximizedArtifactError,
     isLoading: isMaximizedArtifactLoading,
@@ -21,8 +22,19 @@ const CollectionPage = () => {
     dismissErrorHandler: dismissMaximizedArtifactError
   } = useHttp();
 
+  const formik = useFormik({
+    initialValues: {
+      searchText: ''
+    }
+  });
+
+  const {
+    values: { searchText: formikSearchText }
+  } = formik;
+
   useEffect(() => {
     const fetchCollectedArtifacts = () => {
+      setAreArtifactsLoading(true);
       const requestConfig = {
         url: `${apiUrl}/v1/artifacts/collection`,
         method: 'GET',
@@ -36,35 +48,44 @@ const CollectionPage = () => {
 
       const handleResponse = (response) => {
         setArtifacts(response.data.artifacts);
+        setAreArtifactsLoading(false);
       };
 
-      sendArtifactsRequest(requestConfig, handleResponse);
+      const handleError = () => {
+        setAreArtifactsLoading(false);
+      };
+
+      sendArtifactsRequest(requestConfig, handleResponse, handleError);
     };
 
     fetchCollectedArtifacts();
   }, []);
 
+  useEffect(() => {
+    if (artifacts) {
+      setSearchTimeout(
+        setTimeout(() => {
+          const searchResults = artifacts.filter((item) =>
+            item.prompt.toLowerCase().includes(formikSearchText.toLowerCase())
+          );
+
+          setSearchResults(searchResults);
+        }, 500)
+      );
+    }
+
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+        setSearchTimeout(null);
+      }
+    };
+  }, [formikSearchText]);
+
   const cardClickHandler = (e, id) => {
     const maximizedArtifact = artifacts.find((artifact) => artifact._id === id);
 
     setMaximizedArtifact({ ...maximizedArtifact });
-  };
-
-  const handleSearchChange = (e) => {
-    clearTimeout(searchTimeout);
-    setSearchText(e.target.value);
-
-    setSearchTimeout(
-      setTimeout(() => {
-        const searchResults = allPosts.filter(
-          (item) =>
-            item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            item.prompt.toLowerCase().includes(searchText.toLowerCase())
-        );
-
-        setSearchedResults(searchResults);
-      }, 500)
-    );
   };
 
   const makePublicClickHandler = (e, id) => {
@@ -148,7 +169,7 @@ const CollectionPage = () => {
 
   if (maximizedArtifact) {
     modal = (
-      <Modal
+      <ArtifactModal
         dismissModalHandler={closeMaximizedArtifactHandler}
         dropdownItems={[
           {
@@ -173,40 +194,8 @@ const CollectionPage = () => {
             onClick: (e) => deleteClickHandler(e, maximizedArtifact._id)
           }
         ]}
-        headerContent={
-          <div className="flex items-center gap-2">
-            <Avatar content={maximizedArtifact.user.name[0]} />
-            <p className="text-sm">{maximizedArtifact.user.name}</p>
-          </div>
-        }
-        contentType="artifact"
-        content={
-          <>
-            <div
-              className={`relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-3 flex justify-center items-center`}
-            >
-              <img
-                src={maximizedArtifact.artifactUrl}
-                alt={maximizedArtifact.prompt}
-                className="w-full h-full object-contain"
-              />
-              {isMaximizedArtifactLoading && (
-                <div className="absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg">
-                  <Loader />
-                </div>
-              )}
-            </div>
-
-            <div className="mb-2">
-              <p className="mt-5">{maximizedArtifact.prompt}</p>
-            </div>
-            {maximizedArtifact.isPublic && (
-              <span className="border rounded-md bg-gray-500 px-2 py-1 text-white text-sm">
-                Public
-              </span>
-            )}
-          </>
-        }
+        artifact={maximizedArtifact}
+        isLoading={isMaximizedArtifactLoading}
       />
     );
   }
@@ -220,7 +209,6 @@ const CollectionPage = () => {
         backdropZindex="30"
         heading="Error"
         content={artifactsError}
-        dismissModalHandler={dismissArtifactsErrorHandler}
       />
     );
   }
@@ -237,6 +225,82 @@ const CollectionPage = () => {
     );
   }
 
+  let artifactsContent;
+
+  if (searchResults?.length > 0) {
+    artifactsContent = searchResults.map((artifact) => (
+      <Card
+        onClick={(e) => cardClickHandler(e, artifact._id)}
+        key={artifact._id}
+        id={artifact._id}
+        name={artifact.user.name}
+        prompt={artifact.prompt}
+        artifact={artifact.artifactUrl}
+      />
+    ));
+  }
+
+  if (searchResults?.length === 0) {
+    artifactsContent = (
+      <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
+        No search results founds.
+      </h2>
+    );
+  }
+
+  if (!formikSearchText && artifacts?.length > 0) {
+    artifactsContent = artifacts.map((artifact) => (
+      <Card
+        onClick={(e) => cardClickHandler(e, artifact._id)}
+        key={artifact._id}
+        id={artifact._id}
+        name={artifact.user.name}
+        prompt={artifact.prompt}
+        artifact={artifact.artifactUrl}
+      />
+    ));
+  }
+
+  if (!formikSearchText && artifacts?.length === 0) {
+    artifactsContent = (
+      <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
+        No posts found
+      </h2>
+    );
+  }
+
+  let content;
+
+  if (areArtifactsLoading) {
+    content = (
+      <div className="flex justify-center items-center mt-14">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (artifacts) {
+    content = (
+      <>
+        <div className="mt-16">
+          <Input
+            label="Search Artifacts"
+            input={{
+              type: 'text',
+              name: 'searchText',
+              placeholder: 'Search collected artifacts',
+              value: formikSearchText,
+              onChange: formik.handleChange
+            }}
+          />
+        </div>
+        <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
+          {artifactsContent}
+        </div>
+      </>
+    );
+  }
+
   return (
     <div>
       {modal}
@@ -249,36 +313,7 @@ const CollectionPage = () => {
           All your collected artifacts in one place.
         </p>
       </div>
-      <div className="mt-16">
-        <Input
-          label="Search Artifacts"
-          input={{
-            type: 'text',
-            name: 'text',
-            placeholder: 'Search collected artifacts',
-            value: searchText,
-            onChange: handleSearchChange
-          }}
-        />
-      </div>
-      <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
-        {artifacts ? (
-          artifacts.map((artifact) => (
-            <Card
-              onClick={(e) => cardClickHandler(e, artifact._id)}
-              key={artifact._id}
-              id={artifact._id}
-              name={artifact.user.name}
-              prompt={artifact.prompt}
-              artifact={artifact.artifactUrl}
-            />
-          ))
-        ) : (
-          <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
-            No posts found
-          </h2>
-        )}
-      </div>
+      {content}
     </div>
   );
 };
