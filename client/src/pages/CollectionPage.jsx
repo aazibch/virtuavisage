@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react';
 import { apiUrl } from '../constants';
 import { generateHttpConfig, downloadImage } from '../utils';
 
+let searchTimeout = null;
+
 const CollectionPage = () => {
   const [areArtifactsLoading, setAreArtifactsLoading] = useState(true);
   const [artifacts, setArtifacts] = useState(null);
   const [maximizedArtifact, setMaximizedArtifact] = useState(null);
-  const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
+  const [showDeletionModal, setShowDeletionModal] = useState(false);
 
   const { error: artifactsError, sendRequest: sendArtifactsRequest } =
     useHttp();
@@ -63,21 +65,19 @@ const CollectionPage = () => {
 
   useEffect(() => {
     if (artifacts) {
-      setSearchTimeout(
-        setTimeout(() => {
-          const searchResults = artifacts.filter((item) =>
-            item.prompt.toLowerCase().includes(formikSearchText.toLowerCase())
-          );
+      searchTimeout = setTimeout(() => {
+        const searchResults = artifacts.filter((item) =>
+          item.prompt.toLowerCase().includes(formikSearchText.toLowerCase())
+        );
 
-          setSearchResults(searchResults);
-        }, 500)
-      );
+        setSearchResults(searchResults);
+      }, 500);
     }
 
     return () => {
       if (searchTimeout) {
         clearTimeout(searchTimeout);
-        setSearchTimeout(null);
+        searchTimeout = null;
       }
     };
   }, [formikSearchText]);
@@ -88,7 +88,7 @@ const CollectionPage = () => {
     setMaximizedArtifact({ ...maximizedArtifact });
   };
 
-  const makePublicClickHandler = (e, id) => {
+  const makePublicHandler = (e, id) => {
     const requestConfig = generateHttpConfig(
       `${apiUrl}/v1/artifacts/public`,
       'POST',
@@ -112,7 +112,7 @@ const CollectionPage = () => {
     sendMaximizedArtifactRequest(requestConfig, handleResponse);
   };
 
-  const removeFromPublicClickHandler = (e, id) => {
+  const removeFromPublicHandler = (e, id) => {
     const requestConfig = generateHttpConfig(
       `${apiUrl}/v1/artifacts/public/${id}`,
       'DELETE',
@@ -138,11 +138,21 @@ const CollectionPage = () => {
     sendMaximizedArtifactRequest(requestConfig, handleResponse);
   };
 
-  const downloadClickHandler = (e, artifactId, artifactUrl) => {
+  const downloadHandler = (e, artifactId, artifactUrl) => {
     downloadImage(artifactId, artifactUrl);
   };
 
-  const deleteClickHandler = (e, id) => {
+  const deleteButtonHandler = () => {
+    setShowDeletionModal(true);
+  };
+
+  const deleteModalCloseHandler = () => {
+    setShowDeletionModal(false);
+  };
+
+  const deleteConfirmHandler = (e) => {
+    const { _id: id } = maximizedArtifact;
+    setShowDeletionModal(false);
     const requestConfig = generateHttpConfig(
       `${apiUrl}/v1/artifacts/collection/${id}`,
       'DELETE',
@@ -177,13 +187,13 @@ const CollectionPage = () => {
               ? 'Remove From Public'
               : 'Make Public',
             onClick: maximizedArtifact.isPublic
-              ? (e) => removeFromPublicClickHandler(e, maximizedArtifact._id)
-              : (e) => makePublicClickHandler(e, maximizedArtifact._id)
+              ? (e) => removeFromPublicHandler(e, maximizedArtifact._id)
+              : (e) => makePublicHandler(e, maximizedArtifact._id)
           },
           {
             content: 'Download',
             onClick: (e) =>
-              downloadClickHandler(
+              downloadHandler(
                 e,
                 maximizedArtifact._id,
                 maximizedArtifact.artifactUrl
@@ -191,7 +201,7 @@ const CollectionPage = () => {
           },
           {
             content: 'Delete',
-            onClick: (e) => deleteClickHandler(e, maximizedArtifact._id)
+            onClick: deleteButtonHandler
           }
         ]}
         artifact={maximizedArtifact}
@@ -213,6 +223,21 @@ const CollectionPage = () => {
         heading="Error"
         content={maximizedArtifactError}
         dismissModalHandler={dismissMaximizedArtifactError}
+      />
+    );
+  }
+
+  let deletionModal;
+
+  if (showDeletionModal) {
+    deletionModal = (
+      <Modal
+        overlaid
+        heading="Deletion Confirmation"
+        contentType="deletionPrompt"
+        content="Are you sure you want to delete this artifact?"
+        dismissModalHandler={deleteModalCloseHandler}
+        confirmModalHandler={deleteConfirmHandler}
       />
     );
   }
@@ -297,6 +322,7 @@ const CollectionPage = () => {
     <div>
       {modal}
       {errorModal}
+      {deletionModal}
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">
           Collection

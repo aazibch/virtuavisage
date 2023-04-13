@@ -9,6 +9,7 @@ import { getRandomPrompt, downloadImage } from '../utils';
 import { Loader, Input, Button, Modal, ArtifactModal } from '../components';
 import { apiUrl } from '../constants';
 import { useHttp } from '../hooks';
+import { generateHttpConfig } from '../utils';
 
 const validationSchema = yup.object({
   prompt: yup
@@ -46,17 +47,12 @@ const CreatePage = () => {
 
   const generateArtifact = async (values) => {
     setArtifact(null);
-    const requestConfig = {
-      url: `${apiUrl}/v1/artifacts`,
-      method: 'POST',
-      withCredentials: true,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: values
-    };
+    const requestConfig = generateHttpConfig(
+      `${apiUrl}/v1/artifacts`,
+      'POST',
+      true,
+      values
+    );
 
     const handleResponse = (response) => {
       setArtifact({
@@ -68,21 +64,13 @@ const CreatePage = () => {
     sendGenerateRequest(requestConfig, handleResponse);
   };
 
-  const saveArtifact = async () => {
-    const requestConfig = {
-      url: `${apiUrl}/v1/artifacts/collection`,
-      method: 'POST',
-      withCredentials: true,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: {
-        prompt: artifact.prompt,
-        artifact: artifact.image
-      }
-    };
+  const saveArtifactToCollectionHandler = async () => {
+    const requestConfig = generateHttpConfig(
+      `${apiUrl}/v1/artifacts/collection`,
+      'POST',
+      true,
+      { prompt: artifact.prompt, artifact: artifact.image }
+    );
 
     const handleResponse = (response) => {
       navigate('/collection');
@@ -91,24 +79,26 @@ const CreatePage = () => {
     sendSaveRequest(requestConfig, handleResponse);
   };
 
-  const handleSurpriseMe = () => {
+  const surpriseMeHandler = () => {
     const randomPrompt = getRandomPrompt(formik.values.prompt);
     formik.setFieldValue('prompt', randomPrompt);
   };
 
-  const openMaximizedArtifact = () => {
+  const openMaximizedArtifactHandler = () => {
     setIsArtifactMaximized(true);
   };
 
-  const closeMaximizedArtifact = () => {
+  const closeMaximizedArtifactHandler = () => {
     setIsArtifactMaximized(false);
   };
 
-  const maximizedArtifactDownloadHandler = (e, artifactUrl) => {
+  const maximizedArtifactDownloadHandler = (e, base64Artifact) => {
     // get first 24 digits of the base64 artifact representation.
-    const id = artifactUrl.slice(22, 46);
+    const id = base64Artifact
+      .replace('data:image/png;base64,', '')
+      .split(0, 24);
 
-    downloadImage(id, artifactUrl);
+    downloadImage(id, base64Artifact);
   };
 
   let maximizedArtifact;
@@ -130,9 +120,12 @@ const CreatePage = () => {
             onClick: (e) =>
               maximizedArtifactDownloadHandler(e, modifiedArtifact.artifactUrl)
           },
-          { content: 'Save', onClick: saveArtifact }
+          {
+            content: 'Save to Collection',
+            onClick: saveArtifactToCollectionHandler
+          }
         ]}
-        dismissModalHandler={closeMaximizedArtifact}
+        dismissModalHandler={closeMaximizedArtifactHandler}
       />
     );
   }
@@ -176,7 +169,7 @@ const CreatePage = () => {
           <Input
             label="Prompt"
             isSurpriseMe
-            handleSurpriseMe={handleSurpriseMe}
+            handleSurpriseMe={surpriseMeHandler}
             error={formik.touched.prompt && formik.errors.prompt}
             input={{
               type: 'text',
@@ -188,7 +181,7 @@ const CreatePage = () => {
           />
 
           <div
-            onClick={artifact ? openMaximizedArtifact : null}
+            onClick={artifact ? openMaximizedArtifactHandler : null}
             className={`relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 max-w-lg p-3 flex justify-center items-center ${
               artifact ? 'cursor-pointer' : 'cursor-auto'
             }`}
@@ -228,9 +221,9 @@ const CreatePage = () => {
               type="button"
               className="mt-3"
               disabled={isSaving}
-              onClick={saveArtifact}
+              onClick={saveArtifactToCollectionHandler}
             >
-              Save
+              Save to Collection
             </Button>
           )}
         </div>

@@ -16,13 +16,18 @@ const Modal = ({
 }) => {
   let topOffsetClass = 'top-[20vh]';
   let zIndexClass = 'z-20';
+  let confirmButtonStyleType = 'primary';
 
   if (contentType === 'artifact') {
     topOffsetClass = 'top-[5vh]';
   }
 
+  if (contentType === 'deletionPrompt') {
+    confirmButtonStyleType = 'danger';
+  }
+
   if (overlaid) {
-    zIndexClass = 'z-30';
+    zIndexClass = 'z-40';
   }
 
   const modal = (
@@ -47,17 +52,18 @@ const Modal = ({
       <div className="p-3">{content}</div>
       {(confirmModalHandler || dismissModalHandler) && (
         <div className="flex justify-end border-t overflow-auto p-3">
+          {dismissModalHandler && (
+            <Button onClick={dismissModalHandler} className="mr-1">
+              Close
+            </Button>
+          )}
           {confirmModalHandler && (
             <Button
-              className="mr-2"
-              styleType="primary"
-              onClick={props.confirmModalHandler}
+              styleType={confirmButtonStyleType}
+              onClick={confirmModalHandler}
             >
               Confirm
             </Button>
-          )}
-          {dismissModalHandler && (
-            <Button onClick={dismissModalHandler}>Close</Button>
           )}
         </div>
       )}

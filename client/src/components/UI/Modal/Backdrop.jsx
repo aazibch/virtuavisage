@@ -2,7 +2,7 @@ const Backdrop = ({ onClick, overlaid }) => {
   let zIndexClass = 'z-10';
 
   if (overlaid) {
-    zIndexClass = 'z-20';
+    zIndexClass = 'z-30';
   }
 
   return (

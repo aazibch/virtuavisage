@@ -18,6 +18,11 @@ const Button = ({
     bgClass = 'bg-[#6469ff]';
   }
 
+  if (styleType === 'danger') {
+    textClass = 'text-white';
+    bgClass = 'bg-red-600';
+  }
+
   const classNames = `${bgClass} ${textClass} font-inter px-4 py-2 rounded-md text-center disabled:opacity-50 border border-gray-300 ${
     className ? className : ''
   }`;
