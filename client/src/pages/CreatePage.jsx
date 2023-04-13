@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
+import { useSelector } from 'react-redux';
 import * as yup from 'yup';
 
 import { preview } from '../assets';
-import { getRandomPrompt } from '../utils';
-import { Loader, Input, Button, Modal } from '../components';
+import { getRandomPrompt, downloadImage } from '../utils';
+import { Loader, Input, Button, Modal, ArtifactModal } from '../components';
 import { apiUrl } from '../constants';
 import { useHttp } from '../hooks';
 
@@ -19,6 +20,7 @@ const CreatePage = () => {
   const navigate = useNavigate();
   const [artifact, setArtifact] = useState(null);
   const [isArtifactMaximized, setIsArtifactMaximized] = useState(null);
+  const user = useSelector((state) => state.user);
   const {
     error: generateError,
     isLoading: isGenerating,
@@ -83,8 +85,7 @@ const CreatePage = () => {
     };
 
     const handleResponse = (response) => {
-      console.log('response', response);
-      // navigate('/');
+      navigate('/collection');
     };
 
     sendSaveRequest(requestConfig, handleResponse);
@@ -103,23 +104,34 @@ const CreatePage = () => {
     setIsArtifactMaximized(false);
   };
 
+  const maximizedArtifactDownloadHandler = (e, artifactUrl) => {
+    // get first 24 digits of the base64 artifact representation.
+    const id = artifactUrl.slice(22, 46);
+
+    downloadImage(id, artifactUrl);
+  };
+
   let maximizedArtifact;
 
   if (isArtifactMaximized) {
+    const modifiedArtifact = {
+      artifactUrl: artifact.image,
+      prompt: artifact.prompt,
+      user: { ...user }
+    };
+
     maximizedArtifact = (
-      <Modal
-        heading="Artifact"
-        contentType="artifact"
-        content={
-          <>
-            <img
-              src={artifact.image}
-              alt={artifact.prompt}
-              className="w-full h-full object-contain"
-            />
-            <p className="mt-3">{artifact.prompt}</p>
-          </>
-        }
+      <ArtifactModal
+        artifact={modifiedArtifact}
+        isLoading={isSaving}
+        dropdownItems={[
+          {
+            content: 'Download',
+            onClick: (e) =>
+              maximizedArtifactDownloadHandler(e, modifiedArtifact.artifactUrl)
+          },
+          { content: 'Save', onClick: saveArtifact }
+        ]}
         dismissModalHandler={closeMaximizedArtifact}
       />
     );
@@ -140,6 +152,7 @@ const CreatePage = () => {
   if (saveError) {
     error = (
       <Modal
+        overlaid
         heading="Error"
         content={saveError}
         dismissModalHandler={dismissSaveError}
