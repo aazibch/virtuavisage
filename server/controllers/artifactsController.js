@@ -32,7 +32,11 @@ exports.createArtifact = catchAsync(async (req, res, next) => {
 });
 
 exports.getCollectedArtifacts = catchAsync(async (req, res, next) => {
-  const artifacts = await Artifact.find().populate('user').sort('-createdAt');
+  const artifacts = await Artifact.find({
+    user: req.user
+  })
+    .populate('user')
+    .sort('-createdAt');
 
   res.status(200).json({
     success: true,

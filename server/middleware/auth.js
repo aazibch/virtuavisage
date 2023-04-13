@@ -47,7 +47,9 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const user = await User.findOne({ email: profile.emails[0].value });
+        const user = await User.findOne({
+          email: profile.emails[0].value
+        }).select('authType');
 
         if (user?.authType === 'google') return done(null, user);
 

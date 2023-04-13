@@ -19,11 +19,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create(filteredBody);
   newUser.password = undefined;
 
-  // const emailUrl = `${req.protocol}://${req.get('host')}/${
-  //   newUser.username
-  // }/books/add`;
-  // await new Email(newUser, emailUrl).sendWelcome();
-
   req.login(newUser, (err) => {
     if (err) {
       return next(err);
