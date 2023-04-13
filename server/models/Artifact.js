@@ -14,8 +14,8 @@ const artifactSchema = new mongoose.Schema(
         'Please provide the prompt that was used to generate the image.'
       ],
       maxlength: [
-        255,
-        'The prompt should be the maximum length of 255 characters.'
+        555,
+        'The prompt should be the maximum length of 555 characters.'
       ],
       minlength: [5, 'The prompt should be the minimum length of 5 characters.']
     },

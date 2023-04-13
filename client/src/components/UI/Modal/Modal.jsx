@@ -59,9 +59,9 @@ const Modal = ({
           </div>
         )}
       </div>
-      <div className="p-3">{content}</div>
+      <div className="p-3 max-h-[45rem] overflow-y-scroll">{content}</div>
       {(confirmModalHandler || dismissModalHandler) && (
-        <div className="flex justify-end border-t overflow-auto p-3">
+        <div className="bg-white flex justify-end border-t overflow-auto p-3">
           {dismissModalHandler && (
             <Button
               disabled={disableClick}

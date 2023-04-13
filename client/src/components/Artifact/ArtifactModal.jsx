@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal, Avatar, Loader } from '../';
 import { useHttp } from '../../hooks';
-import { generateHttpConfig } from '../../utils';
+import { downloadImage, generateHttpConfig } from '../../utils';
 import { apiUrl } from '../../constants';
 
 const ArtifactModal = ({
@@ -12,8 +12,7 @@ const ArtifactModal = ({
   isLoading,
   postMakePublicHandler,
   postRemoveFromPublicHandler,
-  postDeleteHandler,
-  saveToCollectionHandler
+  postDeleteHandler
 }) => {
   const [showDeletionModal, setShowDeletionModal] = useState(false);
   const {

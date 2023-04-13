@@ -136,7 +136,7 @@ const Home = () => {
         </h1>
         <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">
           Browse through a collection of imaginative and visually appealing
-          images generated with Stable Diffusion.
+          artifacts generated with Stable Diffusion.
         </p>
       </div>
       {content}

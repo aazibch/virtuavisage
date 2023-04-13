@@ -7,55 +7,57 @@ const Header = () => {
   const user = useSelector((state) => state.user);
 
   return (
-    <header className="w-full flex items-center bg-white sm:px-8 px-4 py-4 border-bottom border-b-[#e6ebf4]">
-      <NavLink className="inline mr-5" to="/">
-        <h1 className="font-semibold">VirtuaVisage</h1>
-      </NavLink>
-      {user && (
-        <ul>
-          <li>
-            <NavLink
-              className={({ isActive }) =>
-                `hover:text-gray-700 ${
-                  isActive ? 'text-gray-700' : 'text-gray-500'
-                }`
-              }
-              to="/collection"
-            >
-              Collection
-            </NavLink>
-          </li>
-        </ul>
-      )}
+    <header className="bg-white border-b-[#e6ebf4]">
+      <div className="w-full flex items-center sm:px-8 px-4 py-4 border-bottom max-w-screen-xl mx-auto">
+        <NavLink className="inline mr-5" to="/">
+          <h1 className="font-semibold">VirtuaVisage</h1>
+        </NavLink>
+        {user && (
+          <ul>
+            <li>
+              <NavLink
+                className={({ isActive }) =>
+                  `hover:text-gray-700 ${
+                    isActive ? 'text-gray-700' : 'text-gray-500'
+                  }`
+                }
+                to="/collection"
+              >
+                Collection
+              </NavLink>
+            </li>
+          </ul>
+        )}
 
-      <div className="ml-auto flex items-center">
-        {user ? (
-          <>
+        <div className="ml-auto flex items-center">
+          {user ? (
+            <>
+              <Button
+                className="mr-4"
+                elementType="link"
+                styleType="primary"
+                linkProps={{ to: '/create' }}
+              >
+                Create
+              </Button>
+              <DropdownMenu
+                buttonContent={<Avatar content={user.name[0]} />}
+                items={[
+                  { content: 'Account', link: '/account' },
+                  { content: 'Logout', link: '/auth/logout' }
+                ]}
+              />
+            </>
+          ) : (
             <Button
-              className="mr-4"
               elementType="link"
               styleType="primary"
-              linkProps={{ to: '/create' }}
+              linkProps={{ to: '/auth/login' }}
             >
-              Create
+              Login
             </Button>
-            <DropdownMenu
-              buttonContent={<Avatar content={user.name[0]} />}
-              items={[
-                { content: 'Account', link: '/account' },
-                { content: 'Logout', link: '/auth/logout' }
-              ]}
-            />
-          </>
-        ) : (
-          <Button
-            elementType="link"
-            styleType="primary"
-            linkProps={{ to: '/auth/login' }}
-          >
-            Login
-          </Button>
-        )}
+          )}
+        </div>
       </div>
     </header>
   );

@@ -14,7 +14,7 @@ const Card = ({ id, name, prompt, artifact, onClick }) => {
       />
 
       <div className="group-hover:flex flex-col max-h-[94.5%] hidden absolute bottom-0 left-0 right-0 bg-[#10131f] m-2 p-4 rounded-md">
-        <p className="text-white text-sm overflow-y-auto prompt">{prompt}</p>
+        <p className="text-white text-sm line-clamp-3">{prompt}</p>
         <div className="mt-5 flex justify-between items-center gap-2">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full object-cover bg-green-700 flex justify-center items-center text-white text-xs font-bold">
@@ -25,7 +25,6 @@ const Card = ({ id, name, prompt, artifact, onClick }) => {
           <button
             type="button"
             onClick={() => {
-              console.log(id);
               downloadImage(id, artifact);
             }}
             className="outline-none bg-transparent border-none"

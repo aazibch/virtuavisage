@@ -77,9 +77,7 @@ const CollectionPage = () => {
   };
 
   const closeMaximizedArtifactHandler = () => {
-    console.log('[closeMaximizedArtifactHandler]');
     setMaximizedArtifact(null);
-    console.log('[closeMaximizedArtifactHandler]', maximizedArtifact);
   };
 
   const postMakePublicHandler = (updatedArtifact) => {
@@ -92,12 +90,7 @@ const CollectionPage = () => {
     updatedArtifacts[artifactIndex] = updatedArtifact;
 
     setArtifacts(updatedArtifacts);
-    if (maximizedArtifact) {
-      console.log('i am run');
-      console.log('maximizedArtifact', maximizedArtifact);
-
-      setMaximizedArtifact(updatedArtifact);
-    }
+    setMaximizedArtifact(updatedArtifact);
   };
 
   const postRemoveFromPublicHandler = (id) => {
@@ -113,11 +106,7 @@ const CollectionPage = () => {
     };
 
     setArtifacts(updatedArtifacts);
-    if (maximizedArtifact) {
-      console.log('i am run');
-      console.log('maximizedArtifact', maximizedArtifact);
-      setMaximizedArtifact(updatedArtifacts[artifactIndex]);
-    }
+    setMaximizedArtifact(updatedArtifacts[artifactIndex]);
   };
 
   const postDeleteHandler = (id) => {
@@ -207,7 +196,7 @@ const CollectionPage = () => {
   if (artifacts) {
     content = (
       <>
-        <div className="mt-16">
+        <div className="mt-16 mb-5">
           <Input
             label="Search Artifacts"
             input={{
