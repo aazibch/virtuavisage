@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Avatar } from '..';
 import useWhenClickedOutside from '../../hooks/useWhenClickedOutside';
 
-const DropdownMenu = ({ buttonContent, items }) => {
+const DropdownMenu = ({ buttonContent, items, disableClick }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const dropdownRef = useWhenClickedOutside(() => {
@@ -17,7 +17,10 @@ const DropdownMenu = ({ buttonContent, items }) => {
   return (
     <div ref={dropdownRef} className="relative">
       <button
-        className={`hover:opacity-70 ${isOpen ? 'opacity-70' : ''}`}
+        disabled={disableClick}
+        className={`hover:opacity-70 ${
+          isOpen ? 'opacity-70' : ''
+        } disabled:opacity-50`}
         onClick={toggleMenuHandler}
       >
         {buttonContent}

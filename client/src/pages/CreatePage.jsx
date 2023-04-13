@@ -96,7 +96,7 @@ const CreatePage = () => {
     // get first 24 digits of the base64 artifact representation.
     const id = base64Artifact
       .replace('data:image/png;base64,', '')
-      .split(0, 24);
+      .slice(0, 24);
 
     downloadImage(id, base64Artifact);
   };

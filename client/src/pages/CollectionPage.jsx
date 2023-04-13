@@ -3,7 +3,7 @@ import { Input, Card, Modal, Loader, ArtifactModal } from '../components';
 import { useHttp } from '../hooks';
 import { useEffect, useState } from 'react';
 import { apiUrl } from '../constants';
-import { generateHttpConfig, downloadImage } from '../utils';
+import { generateHttpConfig } from '../utils';
 
 let searchTimeout = null;
 
@@ -12,17 +12,9 @@ const CollectionPage = () => {
   const [artifacts, setArtifacts] = useState(null);
   const [maximizedArtifact, setMaximizedArtifact] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
-  const [showDeletionModal, setShowDeletionModal] = useState(false);
 
   const { error: artifactsError, sendRequest: sendArtifactsRequest } =
     useHttp();
-
-  const {
-    error: maximizedArtifactError,
-    isLoading: isMaximizedArtifactLoading,
-    sendRequest: sendMaximizedArtifactRequest,
-    dismissErrorHandler: dismissMaximizedArtifactError
-  } = useHttp();
 
   const formik = useFormik({
     initialValues: {
@@ -37,16 +29,12 @@ const CollectionPage = () => {
   useEffect(() => {
     const fetchCollectedArtifacts = () => {
       setAreArtifactsLoading(true);
-      const requestConfig = {
-        url: `${apiUrl}/v1/artifacts/collection`,
-        method: 'GET',
-        withCredentials: true,
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      };
+
+      const requestConfig = generateHttpConfig(
+        `${apiUrl}/v1/artifacts/collection`,
+        'GET',
+        true
+      );
 
       const handleResponse = (response) => {
         setArtifacts(response.data.artifacts);
@@ -88,90 +76,56 @@ const CollectionPage = () => {
     setMaximizedArtifact({ ...maximizedArtifact });
   };
 
-  const makePublicHandler = (e, id) => {
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/public`,
-      'POST',
-      true,
-      { id }
-    );
-
-    const handleResponse = (response) => {
-      const artifactIndex = artifacts.findIndex(
-        (artifact) => artifact._id === response.data.artifact._id
-      );
-
-      const updatedArtifacts = [...artifacts];
-
-      updatedArtifacts[artifactIndex] = response.data.artifact;
-
-      setArtifacts(updatedArtifacts);
-      setMaximizedArtifact(response.data.artifact);
-    };
-
-    sendMaximizedArtifactRequest(requestConfig, handleResponse);
-  };
-
-  const removeFromPublicHandler = (e, id) => {
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/public/${id}`,
-      'DELETE',
-      true
-    );
-
-    const handleResponse = (response) => {
-      const artifactIndex = artifacts.findIndex(
-        (artifact) => artifact._id === id
-      );
-
-      const updatedArtifacts = [...artifacts];
-
-      updatedArtifacts[artifactIndex] = {
-        ...updatedArtifacts[artifactIndex],
-        isPublic: false
-      };
-
-      setArtifacts(updatedArtifacts);
-      setMaximizedArtifact(updatedArtifacts[artifactIndex]);
-    };
-
-    sendMaximizedArtifactRequest(requestConfig, handleResponse);
-  };
-
-  const downloadHandler = (e, artifactId, artifactUrl) => {
-    downloadImage(artifactId, artifactUrl);
-  };
-
-  const deleteButtonHandler = () => {
-    setShowDeletionModal(true);
-  };
-
-  const deleteModalCloseHandler = () => {
-    setShowDeletionModal(false);
-  };
-
-  const deleteConfirmHandler = (e) => {
-    const { _id: id } = maximizedArtifact;
-    setShowDeletionModal(false);
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/collection/${id}`,
-      'DELETE',
-      true
-    );
-
-    const handleResponse = (response) => {
-      const updatedArtifacts = artifacts.filter(
-        (artifact) => artifact._id !== id
-      );
-
-      setArtifacts(updatedArtifacts);
-      setMaximizedArtifact(null);
-    };
-
-    sendMaximizedArtifactRequest(requestConfig, handleResponse);
-  };
-
   const closeMaximizedArtifactHandler = () => {
+    console.log('[closeMaximizedArtifactHandler]');
+    setMaximizedArtifact(null);
+    console.log('[closeMaximizedArtifactHandler]', maximizedArtifact);
+  };
+
+  const postMakePublicHandler = (updatedArtifact) => {
+    const artifactIndex = artifacts.findIndex(
+      (artifact) => artifact._id === updatedArtifact._id
+    );
+
+    const updatedArtifacts = [...artifacts];
+
+    updatedArtifacts[artifactIndex] = updatedArtifact;
+
+    setArtifacts(updatedArtifacts);
+    if (maximizedArtifact) {
+      console.log('i am run');
+      console.log('maximizedArtifact', maximizedArtifact);
+
+      setMaximizedArtifact(updatedArtifact);
+    }
+  };
+
+  const postRemoveFromPublicHandler = (id) => {
+    const artifactIndex = artifacts.findIndex(
+      (artifact) => artifact._id === id
+    );
+
+    const updatedArtifacts = [...artifacts];
+
+    updatedArtifacts[artifactIndex] = {
+      ...updatedArtifacts[artifactIndex],
+      isPublic: false
+    };
+
+    setArtifacts(updatedArtifacts);
+    if (maximizedArtifact) {
+      console.log('i am run');
+      console.log('maximizedArtifact', maximizedArtifact);
+      setMaximizedArtifact(updatedArtifacts[artifactIndex]);
+    }
+  };
+
+  const postDeleteHandler = (id) => {
+    const updatedArtifacts = artifacts.filter(
+      (artifact) => artifact._id !== id
+    );
+
+    setArtifacts(updatedArtifacts);
     setMaximizedArtifact(null);
   };
 
@@ -180,32 +134,12 @@ const CollectionPage = () => {
   if (maximizedArtifact) {
     modal = (
       <ArtifactModal
+        postMakePublicHandler={postMakePublicHandler}
+        postRemoveFromPublicHandler={postRemoveFromPublicHandler}
+        postDeleteHandler={postDeleteHandler}
         dismissModalHandler={closeMaximizedArtifactHandler}
-        dropdownItems={[
-          {
-            content: maximizedArtifact.isPublic
-              ? 'Remove From Public'
-              : 'Make Public',
-            onClick: maximizedArtifact.isPublic
-              ? (e) => removeFromPublicHandler(e, maximizedArtifact._id)
-              : (e) => makePublicHandler(e, maximizedArtifact._id)
-          },
-          {
-            content: 'Download',
-            onClick: (e) =>
-              downloadHandler(
-                e,
-                maximizedArtifact._id,
-                maximizedArtifact.artifactUrl
-              )
-          },
-          {
-            content: 'Delete',
-            onClick: deleteButtonHandler
-          }
-        ]}
         artifact={maximizedArtifact}
-        isLoading={isMaximizedArtifactLoading}
+        belongsToUser={true}
       />
     );
   }
@@ -214,32 +148,6 @@ const CollectionPage = () => {
 
   if (artifactsError) {
     errorModal = <Modal heading="Error" content={artifactsError} />;
-  }
-
-  if (maximizedArtifactError) {
-    errorModal = (
-      <Modal
-        overlaid
-        heading="Error"
-        content={maximizedArtifactError}
-        dismissModalHandler={dismissMaximizedArtifactError}
-      />
-    );
-  }
-
-  let deletionModal;
-
-  if (showDeletionModal) {
-    deletionModal = (
-      <Modal
-        overlaid
-        heading="Deletion Confirmation"
-        contentType="deletionPrompt"
-        content="Are you sure you want to delete this artifact?"
-        dismissModalHandler={deleteModalCloseHandler}
-        confirmModalHandler={deleteConfirmHandler}
-      />
-    );
   }
 
   let artifactsContent;
@@ -281,7 +189,7 @@ const CollectionPage = () => {
   if (!searchResults && artifacts?.length === 0) {
     artifactsContent = (
       <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
-        No posts found
+        No artifacts found
       </h2>
     );
   }
@@ -322,7 +230,6 @@ const CollectionPage = () => {
     <div>
       {modal}
       {errorModal}
-      {deletionModal}
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">
           Collection

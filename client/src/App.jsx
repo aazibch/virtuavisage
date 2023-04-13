@@ -43,7 +43,11 @@ const App = () => {
         setIsLoading(false);
       };
 
-      sendRequest(requestConfig, handleResponse);
+      const handleError = (error) => {
+        setIsLoading(false);
+      };
+
+      sendRequest(requestConfig, handleResponse, handleError);
     };
 
     getUser();

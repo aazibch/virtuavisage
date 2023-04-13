@@ -12,7 +12,8 @@ const Modal = ({
   confirmModalHandler,
   dismissModalHandler,
   dropdownItems,
-  overlaid
+  overlaid,
+  disableClick
 }) => {
   let topOffsetClass = 'top-[20vh]';
   let zIndexClass = 'z-20';
@@ -30,6 +31,14 @@ const Modal = ({
     zIndexClass = 'z-40';
   }
 
+  const dismissModal = () => {
+    if (disableClick) {
+      return;
+    }
+
+    dismissModalHandler();
+  };
+
   const modal = (
     <div
       className={`fixed ${topOffsetClass} left-[5%] w-[90%] ${zIndexClass} overflow-hidden bg-white border rounded shadow-lg md:w-[40rem] md:left-[calc(50%-20rem)]`}
@@ -43,6 +52,7 @@ const Modal = ({
         {dropdownItems && (
           <div className="ml-auto flex items-center">
             <DropdownMenu
+              disableClick={disableClick}
               buttonContent={<img className="w-8" src={dots} />}
               items={dropdownItems}
             />
@@ -53,12 +63,17 @@ const Modal = ({
       {(confirmModalHandler || dismissModalHandler) && (
         <div className="flex justify-end border-t overflow-auto p-3">
           {dismissModalHandler && (
-            <Button onClick={dismissModalHandler} className="mr-1">
+            <Button
+              disabled={disableClick}
+              onClick={dismissModal}
+              className="mr-1"
+            >
               Close
             </Button>
           )}
           {confirmModalHandler && (
             <Button
+              disabled={disableClick}
               styleType={confirmButtonStyleType}
               onClick={confirmModalHandler}
             >
@@ -73,7 +88,10 @@ const Modal = ({
   return (
     <>
       {createPortal(
-        <Backdrop overlaid={overlaid} onClick={dismissModalHandler} />,
+        <Backdrop
+          overlaid={overlaid}
+          onClick={dismissModalHandler ? dismissModal : undefined}
+        />,
         document.querySelector('#backdrop-root')
       )}
       {createPortal(modal, document.querySelector('#overlay-root'))}
