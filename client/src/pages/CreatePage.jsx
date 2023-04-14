@@ -200,7 +200,7 @@ const CreatePage = () => {
               />
             )}
 
-            {isGenerating && (
+            {(isGenerating || isSaving) && (
               <div className="absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg">
                 <Loader />
               </div>
@@ -210,7 +210,7 @@ const CreatePage = () => {
         <div className="mt-5">
           <Button
             className="mr-1"
-            disabled={isGenerating}
+            disabled={isGenerating || isSaving}
             type="submit"
             styleType="primary"
           >

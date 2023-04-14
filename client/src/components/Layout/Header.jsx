@@ -43,7 +43,10 @@ const Header = () => {
               <DropdownMenu
                 buttonContent={<Avatar content={user.name[0]} />}
                 items={[
-                  { content: 'Account', link: '/account' },
+                  {
+                    content: 'Account',
+                    link: '/account'
+                  },
                   { content: 'Logout', link: '/auth/logout' }
                 ]}
               />

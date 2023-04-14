@@ -26,7 +26,7 @@ const DropdownMenu = ({ buttonContent, items, disableClick }) => {
         {buttonContent}
       </button>
       {isOpen && (
-        <ul className="absolute border rounded right-0 top-8 min-w-max z-50 shadow-md text-gray-800 text-sm bg-white">
+        <ul className="absolute border rounded right-0 top-8 w-[7rem] min-w-max z-50 shadow-md text-gray-800 text-sm bg-white">
           {items.map((item) => (
             <li key={item.content} className="border-b-1">
               {item.link ? (
