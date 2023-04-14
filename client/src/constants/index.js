@@ -50,7 +50,7 @@ export const surpriseMePrompts = [
 let apiUrl = 'http://localhost:8080';
 
 if (process.env.NODE_ENV === 'production') {
-  apiUrl = '';
+  apiUrl = 'https://virtuavisage-api.onrender.com';
 }
 
 export { apiUrl };
