@@ -200,7 +200,7 @@ const CreatePage = () => {
               />
             )}
 
-            {(isGenerating || isSaving) && (
+            {(isGenerating || (isSaving && !maximizedArtifact)) && (
               <div className="absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg">
                 <Loader />
               </div>
