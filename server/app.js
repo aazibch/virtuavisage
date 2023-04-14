@@ -9,8 +9,8 @@ const { clientUrl } = require('./constants');
 require('./middleware/auth');
 
 console.log('clientUrl', clientUrl);
-
 app.use(cors({ credentials: true, origin: clientUrl }));
+app.options('*', cors({ credentials: true, origin: clientUrl }));
 app.use(express.json({ limit: '50mb' }));
 app.use(
   session({
