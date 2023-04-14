@@ -5,6 +5,7 @@ const MongoStore = require('connect-mongo');
 const express = require('express');
 const app = express();
 
+app.set('trust proxy', 1);
 const { clientUrl } = require('./constants');
 require('./middleware/auth');
 
@@ -19,7 +20,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 24 * 60 * 60 * 100 * process.env.SESSION_AGE,
-      sameSite: 'None',
+      sameSite: 'none',
       secure: true
     },
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_SESSION_URL })
