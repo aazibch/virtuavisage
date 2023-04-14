@@ -57,7 +57,7 @@ exports.saveArtifactToCollection = catchAsync(async (req, res, next) => {
   const collectedArtifact = await Artifact.create({
     user,
     prompt,
-    artifactUrl: cloudArtifact.url
+    artifactUrl: cloudArtifact.url.replace('http', 'https');
   });
 
   res.status(201).json({
