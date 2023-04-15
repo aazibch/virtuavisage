@@ -1,6 +1,7 @@
 const passport = require('passport');
 const express = require('express');
 const router = express.Router();
+const { clientUrl } = require('../constants/index');
 
 const authController = require('../controllers/authController');
 const usersController = require('../controllers/usersControlller');
@@ -13,7 +14,11 @@ router
   .route('/auth/google')
   .get(passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.route('/auth/google/callback').get(authController.authenticateGoogle);
+router.route('/auth/google/callback').get(
+  passport.authenticate('google', {
+    successRedirect: clientUrl
+  })
+);
 
 router.route('/me').get(usersController.getMe);
 
