@@ -47,14 +47,14 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log('[passport auth middleware] profile', profile);
         const user = await User.findOne({
           email: profile.emails[0].value
         }).select('authType');
 
-        console.log('[auth middleware] user', user);
-
-        if (user?.authType === 'google') return done(null, user);
+        if (user?.authType === 'google') {
+          user.authType = undefined;
+          return done(null, user);
+        }
 
         if (!user || user.authType !== 'google') {
           const newUser = await User.create({
@@ -62,6 +62,8 @@ passport.use(
             email: profile.emails[0].value,
             authType: 'google'
           });
+
+          newUser.authType = undefined;
 
           return done(null, newUser);
         }

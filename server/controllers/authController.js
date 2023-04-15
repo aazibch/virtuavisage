@@ -55,7 +55,7 @@ exports.authenticateLocal = (req, res, next) => {
 
 exports.authenticateGoogle = (req, res, next) => {
   passport.authenticate('google', function (err, user, info) {
-    const authErrorUrl = `${clientUrl}/?alert_type="generic_auth_error"`;
+    const authErrorUrl = `${clientUrl}/oauth/post/?status=failure`;
     if (err) {
       return res.redirect(authErrorUrl);
     }
@@ -63,7 +63,7 @@ exports.authenticateGoogle = (req, res, next) => {
       if (err) {
         return res.redirect(authErrorUrl);
       }
-      return res.redirect(`${clientUrl}/?alert_type="success"`);
+      return res.redirect(`${clientUrl}/oauth/post/?status=success`);
     });
   })(req, res, next);
 };

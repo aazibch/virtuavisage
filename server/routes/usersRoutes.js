@@ -17,13 +17,7 @@ router.route('/auth/google').get(
   })
 );
 
-router
-  .route('/auth/google/callback')
-  .get(
-    passport.authenticate('google', {
-      successRedirect: `${clientUrl}/auth/google/success`
-    })
-  );
+router.route('/auth/google/callback').get(authController.authenticateGoogle);
 
 router.route('/me').get(usersController.getMe);
 

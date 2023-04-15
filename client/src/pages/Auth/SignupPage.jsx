@@ -4,6 +4,14 @@ import { google } from '../../assets';
 import { apiUrl } from '../../constants';
 
 const SignupPage = () => {
+  const handleGoogleSignup = () => {
+    window.open(
+      `${apiUrl}/v1/users/auth/google`,
+      'popup',
+      'height=700,width=600'
+    );
+  };
+
   return (
     <div className="border rounded-md border-gray-300 max-w-lg mx-auto p-10">
       <h1 className="font-semibold text-2xl mb-5">Signup</h1>
@@ -12,11 +20,7 @@ const SignupPage = () => {
         <p className={`${styles.signupMessage} text-gray-500 text-sm mb-5`}>
           Or
         </p>
-        <Button
-          className="block w-full"
-          elementType="link"
-          linkProps={{ to: `${apiUrl}/v1/users/auth/google` }}
-        >
+        <Button className="block w-full" onClick={handleGoogleSignup}>
           <div className="flex justify-center items-center">
             <div className="mr-3">
               <img className="w-5" src={google} alt="" />

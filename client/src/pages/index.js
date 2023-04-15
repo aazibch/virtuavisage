@@ -6,6 +6,7 @@ import AccountPage from './AccountPage';
 import LogoutPage from './Auth/LogoutPage';
 import NotFoundPage from './NotFoundPage';
 import CollectionPage from './CollectionPage';
+import PostOAuth from './Auth/PostOAuth';
 
 export {
   Home,
@@ -15,5 +16,6 @@ export {
   AccountPage,
   LogoutPage,
   NotFoundPage,
-  CollectionPage
+  CollectionPage,
+  PostOAuth
 };
