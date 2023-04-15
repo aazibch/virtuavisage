@@ -8,7 +8,7 @@ const SignupPage = () => {
     window.open(
       `${apiUrl}/v1/users/auth/google`,
       'popup',
-      'height=700,width=600'
+      'height=700, width=600'
     );
   };
 
