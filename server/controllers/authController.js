@@ -60,6 +60,7 @@ exports.authenticateGoogle = (req, res, next) => {
       return res.redirect(authErrorUrl);
     }
     req.login(user, (err) => {
+      console.log('[authenticateGoogle] user', user);
       if (err) {
         return res.redirect(authErrorUrl);
       }

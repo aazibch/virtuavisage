@@ -47,6 +47,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('[passport auth middleware] profile', profile);
         const user = await User.findOne({
           email: profile.emails[0].value
         }).select('authType');
