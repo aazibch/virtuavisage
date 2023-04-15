@@ -52,6 +52,8 @@ passport.use(
           email: profile.emails[0].value
         }).select('authType');
 
+        console.log('[auth middleware] user', user);
+
         if (user?.authType === 'google') return done(null, user);
 
         if (!user || user.authType !== 'google') {
