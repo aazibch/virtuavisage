@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <header className="bg-white border-b-[#e6ebf4]">
       <div className="w-full flex items-center sm:px-8 px-4 py-4 border-bottom max-w-screen-xl mx-auto">
-        <NavLink className="inline mr-5" to="/">
+        <NavLink className="inline mr-2" to="/">
           <h1 className="font-semibold">VirtuaVisage</h1>
         </NavLink>
         {user && (

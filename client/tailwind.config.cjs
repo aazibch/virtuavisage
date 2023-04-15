@@ -2,6 +2,9 @@
 
 module.exports = {
   content: ['./src/**/*.{js,jsx}'],
+  future: {
+    hoverOnlyWhenSupported: true
+  },
   theme: {
     extend: {
       screens: {
