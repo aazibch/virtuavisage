@@ -60,18 +60,10 @@ exports.authenticateGoogle = (req, res, next) => {
       return res.redirect(authErrorUrl);
     }
     req.login(user, (err) => {
-      console.log('[authenticateGoogle] user', user);
       if (err) {
         return res.redirect(authErrorUrl);
       }
-      // res.status(200).json({
-      //   status: 'success',
-      //   message: 'You were logged in successfully.',
-      //   data: {
-      //     user: user
-      //   }
-      // });
-      return res.redirect(`${clientUrl}/"`);
+      return res.redirect(`${clientUrl}/?alert_type="success"`);
     });
   })(req, res, next);
 };

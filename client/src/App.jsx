@@ -16,6 +16,7 @@ import { useHttp } from './hooks';
 import { apiUrl } from './constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from './store/auth';
+import GoogleSuccess from './pages/GoogleSuccess';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -69,6 +70,7 @@ const App = () => {
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         {user && authenticatedUserRoutes}
+        <Route path="/auth/google/success" element={<GoogleSuccess />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Layout>

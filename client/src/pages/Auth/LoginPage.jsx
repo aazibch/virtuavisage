@@ -4,6 +4,15 @@ import { google } from '../../assets';
 import { apiUrl } from '../../constants';
 
 const LoginPage = () => {
+  const handleOAuth = () => {
+    console.log('run');
+    window.open(
+      `${apiUrl}/v1/users/auth/google`,
+      'popup',
+      'height=500,width=500'
+    );
+  };
+
   return (
     <div className="border rounded-md border-gray-300 max-w-lg mx-auto p-10">
       <h1 className="font-semibold text-2xl mb-5">Login</h1>
@@ -14,8 +23,9 @@ const LoginPage = () => {
         </p>
         <Button
           className="block w-full"
-          elementType="link"
-          linkProps={{ to: `${apiUrl}/v1/users/auth/google` }}
+          // elementType="link"
+          onClick={handleOAuth}
+          // linkProps={{ to: `${apiUrl}/v1/users/auth/google` }}
         >
           <div className="flex justify-center items-center">
             <div className="mr-3">
