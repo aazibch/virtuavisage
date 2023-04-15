@@ -3,6 +3,7 @@ const AppError = require('../utils/AppError');
 const catchAsync = require('../middleware/catchAsync');
 
 exports.getMe = catchAsync(async (req, res, next) => {
+  console.log('req.isAuthenticated()', req.isAuthenticated());
   let user = await User.findById(req.user);
   console.log('[getMe] req.user', req.user);
 
