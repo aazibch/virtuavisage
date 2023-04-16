@@ -3,10 +3,12 @@
 A full-stack application for AI enthusiasts, VirtuaVisage allows users to:
 
 - Generate images using the Stable Diffusion model.
-- Signup to keep track of all your artifacts.
+- Signup to keep track of all of their artifacts.
 - Share artifacts with the community.
 
-Users can signup either using local authentication or through their Google account via OAuth 2.0 standard.
+Users can signup either using local authentication or through their Google account via the OAuth 2.0 standard.
+
+Stability AI's JavaScript gRPC client is used to generate and fetch the artifacts, while Cloudinary's SDK is utilized to store the artifacts, and MongoDB is used as the database.
 
 ## Stable Diffusion
 
