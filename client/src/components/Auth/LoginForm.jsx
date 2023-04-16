@@ -1,12 +1,13 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { authActions } from '../../store/auth';
 import { Input, Button, Loader } from '../index';
 import { useHttp } from '../../hooks';
 import { apiUrl } from '../../constants';
-import { useNavigate } from 'react-router-dom';
 import Modal from '../UI/Modal/Modal';
+import { generateHttpConfig } from '../../utils';
 
 const validationSchema = yup.object({
   email: yup
@@ -42,17 +43,12 @@ const LoginForm = () => {
   });
 
   const sendData = (values) => {
-    const requestConfig = {
-      url: `${apiUrl}/v1/users/auth/login`,
-      method: 'POST',
-      withCredentials: true,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: values
-    };
+    const requestConfig = generateHttpConfig(
+      `${apiUrl}/v1/users/auth/login`,
+      'POST',
+      true,
+      values
+    );
 
     const handleResponse = (response) => {
       dispatch(authActions.login(response.data.user));

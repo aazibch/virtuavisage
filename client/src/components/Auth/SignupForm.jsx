@@ -7,6 +7,7 @@ import { useHttp } from '../../hooks';
 import { apiUrl } from '../../constants';
 import Modal from '../UI/Modal/Modal';
 import { authActions } from '../../store/auth';
+import { generateHttpConfig } from '../../utils';
 
 const validationSchema = yup.object({
   name: yup
@@ -53,12 +54,12 @@ const SignupForm = () => {
   });
 
   const sendData = (values) => {
-    const requestConfig = {
-      url: `${apiUrl}/v1/users/auth/signup`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: values
-    };
+    const requestConfig = generateHttpConfig(
+      `${apiUrl}/v1/users/auth/signup`,
+      'POST',
+      true,
+      values
+    );
 
     const handleResponse = (response) => {
       dispatch(authActions.login(response.data.user));

@@ -18,6 +18,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   const newUser = await User.create(filteredBody);
   newUser.password = undefined;
+  newUser.authType = undefined;
 
   req.login(newUser, (err) => {
     if (err) {
