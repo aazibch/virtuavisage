@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { Avatar, Button } from '../components';
 
 const AccountPage = () => {
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <div className="text-center w-[20rem] mx-auto mt-14">

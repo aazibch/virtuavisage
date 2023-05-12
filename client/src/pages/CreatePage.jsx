@@ -21,7 +21,7 @@ const CreatePage = () => {
   const navigate = useNavigate();
   const [artifact, setArtifact] = useState(null);
   const [isArtifactMaximized, setIsArtifactMaximized] = useState(null);
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const {
     error: generateError,
     isLoading: isGenerating,

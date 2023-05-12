@@ -1,40 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
+import thunkArtifactsActions from '../store/artifacts-actions';
 import { Loader, Card, ArtifactModal, Modal } from '../components';
-import { apiUrl } from '../constants';
-import { generateHttpConfig } from '../utils';
-import { useHttp } from '../hooks';
 
 const Home = () => {
-  const [areArtifactsLoading, setAreArtifactsLoading] = useState(false);
-  const [artifacts, setArtifacts] = useState(null);
   const [maximizedArtifact, setMaximizedArtifact] = useState(null);
+  const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user);
-  const { error: artifactsError, sendRequest: sendArtifactsRequest } =
-    useHttp();
+  const user = useSelector((state) => state.auth.user);
+  const artifacts = useSelector((state) => state.artifacts.artifacts);
+  const artifactsError = useSelector((state) => state.artifacts.error);
+  const { loading: areArtifactsLoading } = useSelector(
+    (state) => state.artifacts.loading
+  );
 
   useEffect(() => {
-    const getArtifacts = async () => {
-      setAreArtifactsLoading(true);
-      const requestConfig = generateHttpConfig(
-        `${apiUrl}/v1/artifacts/public`,
-        'GET'
-      );
-
-      const handleResponse = (response) => {
-        setArtifacts(response.data.artifacts);
-        setAreArtifactsLoading(false);
-      };
-
-      const handleError = (error) => {
-        setAreArtifactsLoading(false);
-      };
-
-      sendArtifactsRequest(requestConfig, handleResponse, handleError);
-    };
-
-    getArtifacts();
+    dispatch(thunkArtifactsActions.fetchPublicArtifacts());
   }, []);
 
   const cardClickHandler = (e, id) => {

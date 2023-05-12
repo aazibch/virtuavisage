@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Modal, Avatar, Loader } from '../';
 import { useHttp } from '../../hooks';
 import { downloadImage, generateHttpConfig } from '../../utils';
 import { apiUrl } from '../../constants';
+import thunkArtifactsActions from '../../store/artifacts-actions';
 
 const ArtifactModal = ({
   dismissModalHandler,
@@ -21,6 +23,7 @@ const ArtifactModal = ({
     sendRequest,
     dismissErrorHandler
   } = useHttp();
+  const dispatch = useDispatch();
 
   const makePublicHandler = (e, id) => {
     const requestConfig = generateHttpConfig(

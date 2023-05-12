@@ -21,7 +21,7 @@ import { authActions } from './store/auth';
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { sendRequest } = useHttp();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
