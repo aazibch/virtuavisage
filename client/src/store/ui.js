@@ -24,9 +24,6 @@ const uiSlice = createSlice({
     setError(state, action) {
       state.error = action.payload;
     },
-    dismissError(state, action) {
-      state.error = null;
-    },
     setShowDeletionModal(state, action) {
       state.showDeletionModal = action.payload;
     }

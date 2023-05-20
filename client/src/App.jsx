@@ -13,14 +13,22 @@ import {
   CollectionPage,
   PostOAuth
 } from './pages';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Layout, Loader } from './components';
 import thunkAuthActions from './store/auth-actions';
+import { uiActions } from './store/ui';
 
 const App = () => {
   const user = useSelector((state) => state.auth.user);
   const loading = useSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { pathname } = location;
+
+  useEffect(() => {
+    dispatch(uiActions.setError(null));
+    dispatch(uiActions.setMaximizedArtifact(null));
+  }, [pathname]);
 
   useEffect(() => {
     dispatch(thunkAuthActions.fetchUser());

@@ -57,7 +57,8 @@ export const sendHttpRequest = async (
       }
 
       // Handling JSON error response
-      return dispatch(uiActions.setError(res.message));
+      dispatch(uiActions.setError(res.message));
+      return;
     }
 
     if (requestConfig.method !== 'DELETE') {

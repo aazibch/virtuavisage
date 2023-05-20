@@ -48,7 +48,7 @@ const ArtifactModal = ({
   };
 
   const dismissErrorHandler = () => {
-    dispatch(uiActions.dismissError());
+    dispatch(uiActions.setError(null));
   };
 
   const downloadHandler = (e, artifactId, artifactUrl) => {
