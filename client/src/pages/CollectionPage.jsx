@@ -1,20 +1,20 @@
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { Input, Card, Modal, Loader, ArtifactModal } from '../components';
-import { useHttp } from '../hooks';
-import { useEffect, useState } from 'react';
-import { apiUrl } from '../constants';
-import { generateHttpConfig } from '../utils';
+import thunkAuthActions from '../store/auth-actions';
+import { uiActions } from '../store/ui';
 
 let searchTimeout = null;
 
 const CollectionPage = () => {
-  const [areArtifactsLoading, setAreArtifactsLoading] = useState(true);
-  const [artifacts, setArtifacts] = useState(null);
-  const [maximizedArtifact, setMaximizedArtifact] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
+  const dispatch = useDispatch();
 
-  const { error: artifactsError, sendRequest: sendArtifactsRequest } =
-    useHttp();
+  const areArtifactsLoading = useSelector((state) => state.ui.loading);
+  const artifactsError = useSelector((state) => state.ui.error);
+  const artifacts = useSelector((state) => state.auth.collectedArtifacts);
+  const maximizedArtifact = useSelector((state) => state.ui.maximizedArtifact);
 
   const formik = useFormik({
     initialValues: {
@@ -27,29 +27,10 @@ const CollectionPage = () => {
   } = formik;
 
   useEffect(() => {
-    const fetchCollectedArtifacts = () => {
-      setAreArtifactsLoading(true);
-
-      const requestConfig = generateHttpConfig(
-        `${apiUrl}/v1/artifacts/collection`,
-        'GET',
-        true
-      );
-
-      const handleResponse = (response) => {
-        setArtifacts(response.data.artifacts);
-        setAreArtifactsLoading(false);
-      };
-
-      const handleError = () => {
-        setAreArtifactsLoading(false);
-      };
-
-      sendArtifactsRequest(requestConfig, handleResponse, handleError);
-    };
-
-    fetchCollectedArtifacts();
-  }, []);
+    if (!artifacts) {
+      dispatch(thunkAuthActions.fetchCollectedArtifacts());
+    }
+  }, [artifacts]);
 
   useEffect(() => {
     if (artifacts) {
@@ -73,49 +54,11 @@ const CollectionPage = () => {
   const cardClickHandler = (e, id) => {
     const maximizedArtifact = artifacts.find((artifact) => artifact._id === id);
 
-    setMaximizedArtifact({ ...maximizedArtifact });
+    dispatch(uiActions.setMaximizedArtifact(maximizedArtifact));
   };
 
   const closeMaximizedArtifactHandler = () => {
-    setMaximizedArtifact(null);
-  };
-
-  const postMakePublicHandler = (updatedArtifact) => {
-    const artifactIndex = artifacts.findIndex(
-      (artifact) => artifact._id === updatedArtifact._id
-    );
-
-    const updatedArtifacts = [...artifacts];
-
-    updatedArtifacts[artifactIndex] = updatedArtifact;
-
-    setArtifacts(updatedArtifacts);
-    setMaximizedArtifact(updatedArtifact);
-  };
-
-  const postRemoveFromPublicHandler = (id) => {
-    const artifactIndex = artifacts.findIndex(
-      (artifact) => artifact._id === id
-    );
-
-    const updatedArtifacts = [...artifacts];
-
-    updatedArtifacts[artifactIndex] = {
-      ...updatedArtifacts[artifactIndex],
-      isPublic: false
-    };
-
-    setArtifacts(updatedArtifacts);
-    setMaximizedArtifact(updatedArtifacts[artifactIndex]);
-  };
-
-  const postDeleteHandler = (id) => {
-    const updatedArtifacts = artifacts.filter(
-      (artifact) => artifact._id !== id
-    );
-
-    setArtifacts(updatedArtifacts);
-    setMaximizedArtifact(null);
+    dispatch(uiActions.setMaximizedArtifact(null));
   };
 
   let modal;
@@ -123,9 +66,6 @@ const CollectionPage = () => {
   if (maximizedArtifact) {
     modal = (
       <ArtifactModal
-        postMakePublicHandler={postMakePublicHandler}
-        postRemoveFromPublicHandler={postRemoveFromPublicHandler}
-        postDeleteHandler={postDeleteHandler}
         dismissModalHandler={closeMaximizedArtifactHandler}
         artifact={maximizedArtifact}
         belongsToUser={true}

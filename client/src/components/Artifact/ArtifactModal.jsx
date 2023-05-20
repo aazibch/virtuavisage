@@ -1,57 +1,37 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { Modal, Avatar, Loader } from '../';
-import { useHttp } from '../../hooks';
-import { downloadImage, generateHttpConfig } from '../../utils';
-import { apiUrl } from '../../constants';
-import thunkArtifactsActions from '../../store/artifacts-actions';
+import { downloadImage } from '../../utils';
+import thunkAuthActions from '../../store/auth-actions';
+import { uiActions } from '../../store/ui';
 
 const ArtifactModal = ({
   dismissModalHandler,
   artifact,
   belongsToUser,
-  dropdownItems,
-  isLoading,
-  postMakePublicHandler,
-  postRemoveFromPublicHandler,
-  postDeleteHandler
+  dropdownItems
 }) => {
   const [showDeletionModal, setShowDeletionModal] = useState(false);
-  const {
-    error,
-    isLoading: modalLoading,
-    sendRequest,
-    dismissErrorHandler
-  } = useHttp();
+
+  const error = useSelector((state) => state.ui.error);
+  const isLoading = useSelector((state) => state.ui.loading);
+  const modalLoading = useSelector(
+    (state) => state.ui.maximizedArtifactLoading
+  );
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const makePublicHandler = (e, id) => {
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/public`,
-      'POST',
-      true,
-      { id }
-    );
-
-    const handleResponse = (response) => {
-      postMakePublicHandler(response.data.artifact);
-    };
-
-    sendRequest(requestConfig, handleResponse);
+    dispatch(thunkAuthActions.makeArtifactPublic(id));
   };
 
   const removeFromPublicHandler = (e, id) => {
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/public/${id}`,
-      'DELETE',
-      true
-    );
-
-    const handleResponse = (response) => {
-      postRemoveFromPublicHandler(id);
-    };
-
-    sendRequest(requestConfig, handleResponse);
+    if (location.pathname === '/') {
+      dispatch(thunkAuthActions.removeArtifactFromPublic(id, true));
+    } else {
+      dispatch(thunkAuthActions.removeArtifactFromPublic(id));
+    }
   };
 
   const deleteButtonHandler = () => {
@@ -65,17 +45,11 @@ const ArtifactModal = ({
   const deleteConfirmHandler = (e) => {
     const { _id: id } = artifact;
     setShowDeletionModal(false);
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/collection/${id}`,
-      'DELETE',
-      true
-    );
+    dispatch(thunkAuthActions.deleteArtifact(id));
+  };
 
-    const handleResponse = (response) => {
-      postDeleteHandler(id);
-    };
-
-    sendRequest(requestConfig, handleResponse);
+  const dismissErrorHandler = () => {
+    dispatch(uiActions.dismissError());
   };
 
   const downloadHandler = (e, artifactId, artifactUrl) => {

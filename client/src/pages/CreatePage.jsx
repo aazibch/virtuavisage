@@ -65,6 +65,8 @@ const CreatePage = () => {
   };
 
   const saveArtifactToCollectionHandler = async () => {
+    // working!!
+
     const requestConfig = generateHttpConfig(
       `${apiUrl}/v1/artifacts/collection`,
       'POST',

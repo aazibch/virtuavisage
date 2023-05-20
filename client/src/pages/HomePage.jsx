@@ -1,50 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-import thunkArtifactsActions from '../store/artifacts-actions';
 import { Loader, Card, ArtifactModal, Modal } from '../components';
+import thunkArtifactsActions from '../store/artifacts-actions';
+import { artifactsActions } from '../store/artifacts';
+import { uiActions } from '../store/ui';
 
 const Home = () => {
-  const [maximizedArtifact, setMaximizedArtifact] = useState(null);
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.user);
-  const artifacts = useSelector((state) => state.artifacts.artifacts);
-  const artifactsError = useSelector((state) => state.artifacts.error);
-  const { loading: areArtifactsLoading } = useSelector(
-    (state) => state.artifacts.loading
-  );
+  const artifacts = useSelector((state) => state.artifacts.publicArtifacts);
+  const maximizedArtifact = useSelector((state) => state.ui.maximizedArtifact);
+  const artifactsError = useSelector((state) => state.ui.error);
+  const loading = useSelector((state) => state.ui.loading);
 
   useEffect(() => {
+    dispatch(artifactsActions.clearArtifacts());
     dispatch(thunkArtifactsActions.fetchPublicArtifacts());
   }, []);
 
   const cardClickHandler = (e, id) => {
     const maximizedArtifact = artifacts.find((artifact) => artifact._id === id);
-
-    setMaximizedArtifact({ ...maximizedArtifact });
+    dispatch(uiActions.setMaximizedArtifact(maximizedArtifact));
   };
 
   const closeMaximizedArtifactHandler = () => {
-    setMaximizedArtifact(null);
-  };
-
-  const postRemoveFromPublicHandler = (id) => {
-    const updatedArtifacts = artifacts.filter(
-      (artifact) => artifact._id !== id
-    );
-
-    setArtifacts(updatedArtifacts);
-    setMaximizedArtifact(null);
-  };
-
-  const postDeleteHandler = (id) => {
-    const updatedArtifacts = artifacts.filter(
-      (artifact) => artifact._id !== id
-    );
-
-    setArtifacts(updatedArtifacts);
-    setMaximizedArtifact(null);
+    dispatch(uiActions.setMaximizedArtifact(null));
   };
 
   let errorModal;
@@ -81,8 +62,6 @@ const Home = () => {
   if (maximizedArtifact) {
     maximizedArtifactModal = (
       <ArtifactModal
-        postRemoveFromPublicHandler={postRemoveFromPublicHandler}
-        postDeleteHandler={postDeleteHandler}
         dismissModalHandler={closeMaximizedArtifactHandler}
         artifact={maximizedArtifact}
         belongsToUser={user?._id === maximizedArtifact.user._id}
@@ -92,7 +71,7 @@ const Home = () => {
 
   let content;
 
-  if (areArtifactsLoading) {
+  if (loading) {
     content = (
       <div className="flex justify-center items-center mt-14">
         <Loader />

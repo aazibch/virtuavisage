@@ -1,6 +1,6 @@
 import FileSaver from 'file-saver';
 import { surpriseMePrompts } from '../constants';
-import { artifactsActions } from '../store/artifacts';
+import { uiActions } from '../store/ui';
 
 export const getRandomPrompt = (prompt) => {
   const randomIndex = Math.floor(Math.random() * surpriseMePrompts.length);
@@ -31,9 +31,14 @@ export const generateHttpConfig = (url, method, allowCredentials, body) => {
   };
 };
 
-export const sendHttpRequest = async (requestConfig, dispatch) => {
+export const sendHttpRequest = async (
+  requestConfig,
+  dispatch,
+  loadingAction = uiActions.setLoading,
+  errorHandler
+) => {
   try {
-    dispatch(artifactsActions.setLoading(true));
+    dispatch(loadingAction(true));
 
     let response = await fetch(requestConfig.url, {
       method: requestConfig.method ? requestConfig.method : 'GET',
@@ -45,9 +50,14 @@ export const sendHttpRequest = async (requestConfig, dispatch) => {
 
     if (!response.ok) {
       const res = await response.json();
+      dispatch(loadingAction(false));
+
+      if (errorHandler) {
+        errorHandler();
+      }
+
       // Handling JSON error response
-      dispatch(artifactsActions.setLoading(false));
-      return dispatch(artifactsActions.setError(res.message));
+      return dispatch(uiActions.setError(res.message));
     }
 
     if (requestConfig.method !== 'DELETE') {
@@ -56,10 +66,9 @@ export const sendHttpRequest = async (requestConfig, dispatch) => {
       response = 'deleted';
     }
 
-    dispatch(artifactsActions.setLoading(false));
+    dispatch(loadingAction(false));
     return response;
   } catch (error) {
-    console.log('[sendHttpRequest] error', error);
-    dispatch(artifactsActions.setError('Something went wrong!'));
+    dispatch(uiActions.setError('Something went wrong!'));
   }
 };

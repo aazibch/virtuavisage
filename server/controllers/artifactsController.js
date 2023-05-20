@@ -93,7 +93,7 @@ exports.getPublicArtifacts = catchAsync(async (req, res, next) => {
     isPublic: true
   })
     .populate('user')
-    .sort('-createdAt');
+    .sort('-updatedAt');
 
   res.status(200).json({
     status: 'success',

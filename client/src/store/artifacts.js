@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialArtifactsState = {
-  artifacts: null,
-  loading: true,
-  error: null
+  publicArtifacts: null
 };
 
 const artifactsSlice = createSlice({
@@ -11,18 +9,18 @@ const artifactsSlice = createSlice({
   initialState: initialArtifactsState,
   reducers: {
     replaceArtifacts(state, action) {
-      state.artifacts = action.payload;
+      state.publicArtifacts = action.payload;
+    },
+    clearArtifacts(state) {
+      state.publicArtifacts = null;
     },
     removeArtifactFromPublic(state, action) {
-      state.artifacts = state.artifacts.filter(
+      state.publicArtifacts = state.publicArtifacts.filter(
         (artifact) => artifact._id !== action.payload
       );
     },
-    setLoading(state, action) {
-      state.loading = action.payload;
-    },
-    setError(state, action) {
-      state.error = action.payload;
+    addToPublicArtifacts(state, action) {
+      state.publicArtifacts.push(action.payload);
     }
   }
 });

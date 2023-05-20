@@ -1,6 +1,7 @@
 import { artifactsActions } from './artifacts';
 import { generateHttpConfig, sendHttpRequest } from '../utils';
 import { apiUrl } from '../constants';
+import { uiActions } from './ui';
 
 const thunkArtifactsActions = {
   fetchPublicArtifacts: () => {
@@ -11,6 +12,7 @@ const thunkArtifactsActions = {
       );
 
       const response = await sendHttpRequest(requestConfig, dispatch);
+
       if (response) {
         dispatch(artifactsActions.replaceArtifacts(response.data.artifacts));
       }
