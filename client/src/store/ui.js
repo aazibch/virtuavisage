@@ -4,7 +4,8 @@ const initialUiState = {
   loading: false,
   maximizedArtifactLoading: null,
   error: null,
-  maximizedArtifact: null
+  maximizedArtifact: null,
+  showDeletetionModal: false
 };
 
 const uiSlice = createSlice({
@@ -25,6 +26,9 @@ const uiSlice = createSlice({
     },
     dismissError(state, action) {
       state.error = null;
+    },
+    setShowDeletionModal(state, action) {
+      state.showDeletionModal = action.payload;
     }
   }
 });

@@ -12,8 +12,7 @@ const ArtifactModal = ({
   belongsToUser,
   dropdownItems
 }) => {
-  const [showDeletionModal, setShowDeletionModal] = useState(false);
-
+  const showDeletionModal = useSelector((state) => state.ui.showDeletionModal);
   const error = useSelector((state) => state.ui.error);
   const isLoading = useSelector((state) => state.ui.loading);
   const modalLoading = useSelector(
@@ -35,16 +34,16 @@ const ArtifactModal = ({
   };
 
   const deleteButtonHandler = () => {
-    setShowDeletionModal(true);
+    dispatch(uiActions.setShowDeletionModal(true));
   };
 
   const deleteModalCloseHandler = () => {
-    setShowDeletionModal(false);
+    dispatch(uiActions.setShowDeletionModal(false));
   };
 
   const deleteConfirmHandler = (e) => {
     const { _id: id } = artifact;
-    setShowDeletionModal(false);
+    dispatch(uiActions.setShowDeletionModal(false));
     dispatch(thunkAuthActions.deleteArtifact(id));
   };
 
