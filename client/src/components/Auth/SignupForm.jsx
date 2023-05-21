@@ -1,13 +1,11 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import thunkAuthActions from '../../store/auth-actions';
+import { uiActions } from '../../store/ui';
 import { Input, Button, Loader } from '../';
-import { useHttp } from '../../hooks';
-import { apiUrl } from '../../constants';
 import Modal from '../UI/Modal/Modal';
-import { authActions } from '../../store/auth';
-import { generateHttpConfig } from '../../utils';
 
 const validationSchema = yup.object({
   name: yup
@@ -37,7 +35,8 @@ const validationSchema = yup.object({
 const SignupForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error, sendRequest, dismissErrorHandler } = useHttp();
+  const isLoading = useSelector((state) => state.ui.loading);
+  const error = useSelector((state) => state.ui.error);
 
   const formik = useFormik({
     initialValues: {
@@ -54,19 +53,15 @@ const SignupForm = () => {
   });
 
   const sendData = (values) => {
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/users/auth/signup`,
-      'POST',
-      true,
-      values
+    dispatch(
+      thunkAuthActions.signup(values, () => {
+        navigate('/');
+      })
     );
+  };
 
-    const handleResponse = (response) => {
-      dispatch(authActions.login(response.data.user));
-      navigate('/');
-    };
-
-    sendRequest(requestConfig, handleResponse);
+  const dismissErrorHandler = () => {
+    dispatch(uiActions.setError(null));
   };
 
   let content = (

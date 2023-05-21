@@ -24,6 +24,25 @@ const thunkAuthActions = {
       }
     };
   },
+  signup: (values, callback) => {
+    return async (dispatch) => {
+      const requestConfig = generateHttpConfig(
+        `${apiUrl}/v1/users/auth/signup`,
+        'POST',
+        true,
+        values
+      );
+
+      const response = await sendHttpRequest(requestConfig, dispatch);
+
+      if (response) {
+        if (callback) {
+          callback();
+        }
+        dispatch(authActions.login(response.data.user));
+      }
+    };
+  },
   fetchUser: () => {
     return async (dispatch) => {
       const requestConfig = generateHttpConfig(

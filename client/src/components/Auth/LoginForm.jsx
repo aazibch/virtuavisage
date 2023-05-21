@@ -2,14 +2,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { authActions } from '../../store/auth';
-import { Input, Button, Loader } from '../index';
-import { useHttp } from '../../hooks';
-import { apiUrl } from '../../constants';
-import { generateHttpConfig } from '../../utils';
-import Modal from '../UI/Modal/Modal';
 import thunkAuthActions from '../../store/auth-actions';
 import { uiActions } from '../../store/ui';
+import { Input, Button, Loader } from '../index';
+import Modal from '../UI/Modal/Modal';
 
 const validationSchema = yup.object({
   email: yup
