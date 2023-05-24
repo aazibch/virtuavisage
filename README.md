@@ -10,13 +10,15 @@ Users can signup either using local authentication or through their Google accou
 
 Stability AI's JavaScript gRPC client is used to generate and fetch the artifacts, while Cloudinary's SDK is utilized to store the artifacts, and MongoDB is used as the database.
 
+On this branch (refactoring-redux-state), I have moved almost all the local state to global, implemented via redux.
+
 ## Stable Diffusion
 
 The following parameters are used to setup Stable Diffusion:
 
 **Engine**: stable-diffusion-512-v2-1  
 **Width**: 512  
-**Height**: 512  
+**Height**: 512
 **Samples**: 1  
 **CFG Scale**: 13  
 **Steps**: 25
