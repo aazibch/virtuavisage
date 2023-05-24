@@ -73,9 +73,7 @@ const thunkAuthActions = {
       const response = await sendHttpRequest(requestConfig, dispatch);
 
       if (response) {
-        dispatch(
-          authActions.replaceCollectedArtifacts(response.data.artifacts)
-        );
+        dispatch(authActions.setCollectedArtifacts(response.data.artifacts));
       }
     };
   },
@@ -99,11 +97,6 @@ const thunkAuthActions = {
       );
 
       if (response) {
-        if (state.artifacts.publicArtifacts) {
-          dispatch(
-            artifactsActions.addToPublicArtifacts(response.data.artifact)
-          );
-        }
         dispatch(
           authActions.replaceArtifactInCollection(response.data.artifact)
         );
@@ -178,7 +171,6 @@ const thunkAuthActions = {
         }
 
         if (presentInCollection) {
-          console.log('present in Collection');
           dispatch(authActions.removeArtifactFromCollection(id));
         }
 
@@ -200,7 +192,6 @@ const thunkAuthActions = {
       const response = await sendHttpRequest(requestConfig, dispatch);
 
       if (response) {
-        console.log('response', response);
         dispatch(
           authActions.setArtifact({
             image: `data:image/png;base64,${response.data.artifact}`,

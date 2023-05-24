@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Modal, Avatar, Loader } from '../';
 import { downloadImage } from '../../utils';
 import thunkAuthActions from '../../store/auth-actions';
@@ -20,9 +19,6 @@ const ArtifactModal = ({
   );
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate();
-
-  console.log('location', location);
 
   const makePublicHandler = (e, id) => {
     dispatch(thunkAuthActions.makeArtifactPublic(id));

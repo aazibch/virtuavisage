@@ -5,21 +5,7 @@ const initialUiState = {
   maximizedArtifactLoading: null,
   error: null,
   maximizedArtifact: null,
-  showDeletetionModal: false,
-  sampleData: [
-    {
-      name: 1,
-      url: 'https://res.cloudinary.com/aazibch/image/upload/v1678959999/undraw_Male_avatar_g98d_jo0kfm.png'
-    },
-    {
-      name: 2,
-      url: 'https://res.cloudinary.com/aazibch/image/upload/v1632564002/Project%20Files/Markdown%20Previewer/tesla-logo.png'
-    },
-    {
-      name: 3,
-      url: 'https://res.cloudinary.com/aazibch/image/upload/v1629498025/Screenshots/Vertigo_Wristwatch.png'
-    }
-  ]
+  showDeletetionModal: false
 };
 
 const uiSlice = createSlice({
@@ -40,12 +26,6 @@ const uiSlice = createSlice({
     },
     setShowDeletionModal(state, action) {
       state.showDeletionModal = action.payload;
-    },
-    removeItemFromSampleData(state, action) {
-      console.log(action.payload);
-      state.sampleData = state.sampleData.filter(
-        (item) => item.name !== action.payload
-      );
     }
   }
 });

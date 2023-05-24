@@ -48,7 +48,7 @@ const CollectionPage = () => {
         searchTimeout = null;
       }
     };
-  }, [formikSearchText]);
+  }, [formikSearchText, artifacts]);
 
   const cardClickHandler = (e, id) => {
     const maximizedArtifact = artifacts.find((artifact) => artifact._id === id);
@@ -103,10 +103,7 @@ const CollectionPage = () => {
     );
   }
 
-  console.log('searchResults', searchResults);
-
   if (!searchResults && artifacts) {
-    console.log('rendering new artifacts content.');
     artifactsContent = artifacts.map((artifact) => (
       <Card
         onClick={(e) => cardClickHandler(e, artifact._id)}

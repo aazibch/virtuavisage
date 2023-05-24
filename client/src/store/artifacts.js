@@ -8,19 +8,19 @@ const artifactsSlice = createSlice({
   name: 'artifacts',
   initialState: initialArtifactsState,
   reducers: {
-    replaceArtifacts(state, action) {
+    setArtifacts(state, action) {
       state.publicArtifacts = action.payload;
     },
-    clearArtifacts(state) {
-      state.publicArtifacts = null;
-    },
     removeArtifactFromPublic(state, action) {
-      state.publicArtifacts = state.publicArtifacts.filter(
+      const updatedPublicArtifacts = state.publicArtifacts.filter(
         (artifact) => artifact._id !== action.payload
       );
-    },
-    addToPublicArtifacts(state, action) {
-      state.publicArtifacts.push(action.payload);
+
+      if (updatedPublicArtifacts.length === 0) {
+        state.publicArtifacts = null;
+      } else {
+        state.publicArtifacts = updatedPublicArtifacts;
+      }
     }
   }
 });

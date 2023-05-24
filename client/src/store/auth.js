@@ -20,7 +20,7 @@ const authSlice = createSlice({
     setAuthLoading(state, action) {
       state.loading = action.payload;
     },
-    replaceCollectedArtifacts(state, action) {
+    setCollectedArtifacts(state, action) {
       state.collectedArtifacts = action.payload;
     },
     replaceArtifactInCollection(state, action) {
@@ -36,9 +36,15 @@ const authSlice = createSlice({
       state.collectedArtifacts.unshift(action.payload);
     },
     removeArtifactFromCollection(state, action) {
-      state.collectedArtifacts = state.collectedArtifacts.filter(
+      const updatedCollectedArtifacts = state.collectedArtifacts.filter(
         (artifact) => artifact._id !== action.payload
       );
+
+      if (updatedCollectedArtifacts.length === 0) {
+        state.collectedArtifacts = null;
+      } else {
+        state.collectedArtifacts = updatedCollectedArtifacts;
+      }
     },
     setArtifact(state, action) {
       state.artifact = action.payload;

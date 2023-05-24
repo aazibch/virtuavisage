@@ -14,7 +14,7 @@ const thunkArtifactsActions = {
       const response = await sendHttpRequest(requestConfig, dispatch);
 
       if (response) {
-        dispatch(artifactsActions.replaceArtifacts(response.data.artifacts));
+        dispatch(artifactsActions.setArtifacts(response.data.artifacts));
       }
     };
   }
