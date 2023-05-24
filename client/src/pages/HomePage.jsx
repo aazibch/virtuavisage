@@ -8,6 +8,7 @@ import { uiActions } from '../store/ui';
 const Home = () => {
   const dispatch = useDispatch();
 
+  const sampleData = useSelector((state) => state.ui.sampleData);
   const user = useSelector((state) => state.auth.user);
   const artifacts = useSelector((state) => state.artifacts.publicArtifacts);
   const maximizedArtifact = useSelector((state) => state.ui.maximizedArtifact);
@@ -26,6 +27,11 @@ const Home = () => {
 
   const closeMaximizedArtifactHandler = () => {
     dispatch(uiActions.setMaximizedArtifact(null));
+  };
+
+  const removeHandler = (name) => {
+    console.log('clicked');
+    dispatch(uiActions.removeItemFromSampleData(name));
   };
 
   let errorModal;
@@ -64,7 +70,7 @@ const Home = () => {
       <ArtifactModal
         dismissModalHandler={closeMaximizedArtifactHandler}
         artifact={maximizedArtifact}
-        belongsToUser={user?._id === maximizedArtifact.user._id}
+        belongsToUser={user?._id === maximizedArtifact.user?._id}
       />
     );
   }
@@ -89,6 +95,15 @@ const Home = () => {
 
   return (
     <section className="max-w-7xl mx-auto">
+      <div>
+        {sampleData.map((item) => (
+          <button key={item.name} onClick={() => removeHandler(item.name)}>
+            {item.name}
+            <img src={item.url} />
+          </button>
+        ))}
+      </div>
+
       {maximizedArtifactModal}
       {errorModal}
       <div>

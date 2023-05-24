@@ -8,13 +8,12 @@ import { uiActions } from '../store/ui';
 let searchTimeout = null;
 
 const CollectionPage = () => {
-  const [searchResults, setSearchResults] = useState(null);
-  const dispatch = useDispatch();
-
   const areArtifactsLoading = useSelector((state) => state.ui.loading);
   const artifactsError = useSelector((state) => state.ui.error);
   const artifacts = useSelector((state) => state.auth.collectedArtifacts);
   const maximizedArtifact = useSelector((state) => state.ui.maximizedArtifact);
+  const [searchResults, setSearchResults] = useState(null);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -82,16 +81,18 @@ const CollectionPage = () => {
   let artifactsContent;
 
   if (searchResults?.length > 0) {
-    artifactsContent = searchResults.map((artifact) => (
-      <Card
-        onClick={(e) => cardClickHandler(e, artifact._id)}
-        key={artifact._id}
-        id={artifact._id}
-        name={artifact.user.name}
-        prompt={artifact.prompt}
-        artifact={artifact.artifactUrl}
-      />
-    ));
+    artifactsContent = searchResults.map((artifact) => {
+      return (
+        <Card
+          onClick={(e) => cardClickHandler(e, artifact._id)}
+          key={artifact._id}
+          id={artifact._id}
+          name={artifact.user.name}
+          prompt={artifact.prompt}
+          artifact={artifact.artifactUrl}
+        />
+      );
+    });
   }
 
   if (searchResults?.length === 0) {
@@ -102,7 +103,10 @@ const CollectionPage = () => {
     );
   }
 
-  if (!searchResults && artifacts?.length > 0) {
+  console.log('searchResults', searchResults);
+
+  if (!searchResults && artifacts) {
+    console.log('rendering new artifacts content.');
     artifactsContent = artifacts.map((artifact) => (
       <Card
         onClick={(e) => cardClickHandler(e, artifact._id)}
@@ -115,7 +119,7 @@ const CollectionPage = () => {
     ));
   }
 
-  if (!searchResults && artifacts?.length === 0) {
+  if (!searchResults && !artifacts) {
     artifactsContent = (
       <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
         No artifacts found

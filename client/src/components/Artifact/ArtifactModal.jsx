@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Modal, Avatar, Loader } from '../';
 import { downloadImage } from '../../utils';
 import thunkAuthActions from '../../store/auth-actions';
@@ -20,6 +20,9 @@ const ArtifactModal = ({
   );
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  console.log('location', location);
 
   const makePublicHandler = (e, id) => {
     dispatch(thunkAuthActions.makeArtifactPublic(id));
@@ -44,7 +47,15 @@ const ArtifactModal = ({
   const deleteConfirmHandler = (e) => {
     const { _id: id } = artifact;
     dispatch(uiActions.setShowDeletionModal(false));
+    // if (location.pathname === '/collection') {
+    //   dispatch(
+    //     thunkAuthActions.deleteArtifact(id, () => {
+    //       navigate(0);
+    //     })
+    //   );
+    // } else {
     dispatch(thunkAuthActions.deleteArtifact(id));
+    // }
   };
 
   const dismissErrorHandler = () => {
@@ -120,8 +131,8 @@ const ArtifactModal = ({
         dropdownItems={modalDropdownItems}
         headerContent={
           <div className="flex items-center gap-2">
-            <Avatar content={artifact.user.name[0]} />
-            <p className="text-sm">{artifact.user.name}</p>
+            <Avatar content={artifact.user?.name[0]} />
+            <p className="text-sm">{artifact.user?.name}</p>
           </div>
         }
         contentType="artifact"

@@ -147,7 +147,7 @@ const thunkAuthActions = {
       }
     };
   },
-  deleteArtifact: (id) => {
+  deleteArtifact: (id, callback) => {
     return async (dispatch, getState) => {
       const state = getState();
 
@@ -171,15 +171,68 @@ const thunkAuthActions = {
           (item) => item._id === id
         );
 
+        dispatch(uiActions.setMaximizedArtifact(null));
+
         if (presentInPublic) {
           dispatch(artifactsActions.removeArtifactFromPublic(id));
         }
 
         if (presentInCollection) {
+          console.log('present in Collection');
           dispatch(authActions.removeArtifactFromCollection(id));
         }
 
-        dispatch(uiActions.setMaximizedArtifact(null));
+        if (callback) {
+          callback();
+        }
+      }
+    };
+  },
+  generateArtifact: (values) => {
+    return async (dispatch) => {
+      const requestConfig = generateHttpConfig(
+        `${apiUrl}/v1/artifacts`,
+        'POST',
+        true,
+        values
+      );
+
+      const response = await sendHttpRequest(requestConfig, dispatch);
+
+      if (response) {
+        console.log('response', response);
+        dispatch(
+          authActions.setArtifact({
+            image: `data:image/png;base64,${response.data.artifact}`,
+            prompt: response.data.prompt
+          })
+        );
+      }
+    };
+  },
+  saveArtifactToCollection: (callback) => {
+    return async (dispatch, getState) => {
+      const state = getState();
+
+      const requestConfig = generateHttpConfig(
+        `${apiUrl}/v1/artifacts/collection`,
+        'POST',
+        true,
+        {
+          prompt: state.auth.artifact.prompt,
+          artifact: state.auth.artifact.image
+        }
+      );
+
+      const response = await sendHttpRequest(requestConfig, dispatch);
+
+      if (response) {
+        if (state.auth.collectedArtifacts) {
+          dispatch(authActions.addArtifactToCollection(response.data.artifact));
+        }
+        if (callback) {
+          callback();
+        }
       }
     };
   }

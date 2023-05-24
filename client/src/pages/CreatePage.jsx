@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import { preview } from '../assets';
@@ -10,6 +10,9 @@ import { Loader, Input, Button, Modal, ArtifactModal } from '../components';
 import { apiUrl } from '../constants';
 import { useHttp } from '../hooks';
 import { generateHttpConfig } from '../utils';
+import thunkAuthActions from '../store/auth-actions';
+import { uiActions } from '../store/ui';
+import { authActions } from '../store/auth';
 
 const validationSchema = yup.object({
   prompt: yup
@@ -18,22 +21,18 @@ const validationSchema = yup.object({
 });
 
 const CreatePage = () => {
-  const navigate = useNavigate();
-  const [artifact, setArtifact] = useState(null);
-  const [isArtifactMaximized, setIsArtifactMaximized] = useState(null);
+  const artifact = useSelector((state) => state.auth.artifact);
+  const maximizedArtifact = useSelector((state) => state.ui.maximizedArtifact);
   const user = useSelector((state) => state.auth.user);
-  const {
-    error: generateError,
-    isLoading: isGenerating,
-    sendRequest: sendGenerateRequest,
-    dismissErrorHandler: dismissGenerateError
-  } = useHttp();
-  const {
-    error: saveError,
-    isLoading: isSaving,
-    sendRequest: sendSaveRequest,
-    dismissErrorHandler: dismissSaveError
-  } = useHttp();
+  const loading = useSelector((state) => state.ui.loading);
+  const error = useSelector((state) => state.ui.error);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(authActions.setArtifact(null));
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -46,39 +45,15 @@ const CreatePage = () => {
   });
 
   const generateArtifact = async (values) => {
-    setArtifact(null);
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts`,
-      'POST',
-      true,
-      values
-    );
-
-    const handleResponse = (response) => {
-      setArtifact({
-        image: `data:image/png;base64,${response.data.artifact}`,
-        prompt: response.data.prompt
-      });
-    };
-
-    sendGenerateRequest(requestConfig, handleResponse);
+    dispatch(thunkAuthActions.generateArtifact(values));
   };
 
   const saveArtifactToCollectionHandler = async () => {
-    // working!!
-
-    const requestConfig = generateHttpConfig(
-      `${apiUrl}/v1/artifacts/collection`,
-      'POST',
-      true,
-      { prompt: artifact.prompt, artifact: artifact.image }
-    );
-
     const handleResponse = (response) => {
       navigate('/collection');
     };
 
-    sendSaveRequest(requestConfig, handleResponse);
+    dispatch(thunkAuthActions.saveArtifactToCollection(handleResponse));
   };
 
   const surpriseMeHandler = () => {
@@ -87,11 +62,15 @@ const CreatePage = () => {
   };
 
   const openMaximizedArtifactHandler = () => {
-    setIsArtifactMaximized(true);
+    dispatch(uiActions.setMaximizedArtifact(artifact));
   };
 
   const closeMaximizedArtifactHandler = () => {
-    setIsArtifactMaximized(false);
+    dispatch(uiActions.setMaximizedArtifact(null));
+  };
+
+  const dismissErrorHandler = () => {
+    dispatch(uiActions.setError(null));
   };
 
   const maximizedArtifactDownloadHandler = (e, base64Artifact) => {
@@ -103,7 +82,16 @@ const CreatePage = () => {
     downloadImage(id, base64Artifact);
   };
 
-  let maximizedArtifact;
+  let maximizedArtifactEl;
+
+  const generateError = !artifact && error;
+  const isGenerating = loading && !artifact;
+  const saveError = artifact && error;
+  const isSaving = loading && artifact;
+  const isArtifactMaximized = maximizedArtifact;
+
+  const dismissSaveError = dismissErrorHandler;
+  const dismissGenerateError = dismissErrorHandler;
 
   if (isArtifactMaximized) {
     const modifiedArtifact = {
@@ -112,7 +100,7 @@ const CreatePage = () => {
       user: { ...user }
     };
 
-    maximizedArtifact = (
+    maximizedArtifactEl = (
       <ArtifactModal
         artifact={modifiedArtifact}
         isLoading={isSaving}
@@ -132,10 +120,10 @@ const CreatePage = () => {
     );
   }
 
-  let error;
+  let errorEl;
 
   if (generateError) {
-    error = (
+    errorEl = (
       <Modal
         heading="Error"
         content={generateError}
@@ -145,7 +133,7 @@ const CreatePage = () => {
   }
 
   if (saveError) {
-    error = (
+    errorEl = (
       <Modal
         overlaid
         heading="Error"
@@ -157,8 +145,8 @@ const CreatePage = () => {
 
   return (
     <section className="max-w-7xl mx-auto">
-      {error}
-      {maximizedArtifact}
+      {errorEl}
+      {maximizedArtifactEl}
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
         <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">

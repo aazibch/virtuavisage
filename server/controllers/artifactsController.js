@@ -54,11 +54,15 @@ exports.saveArtifactToCollection = catchAsync(async (req, res, next) => {
     folder: 'virtuavisage-generations'
   });
 
-  const collectedArtifact = await Artifact.create({
+  let collectedArtifact = await Artifact.create({
     user,
     prompt,
     artifactUrl: cloudArtifact.url.replace('http', 'https')
   });
+
+  const userDoc = await User.findById(user);
+
+  collectedArtifact.user = userDoc;
 
   res.status(201).json({
     success: true,

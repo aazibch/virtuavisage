@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialAuthState = {
   loading: false,
   user: null,
+  artifact: null,
   collectedArtifacts: null
 };
 
@@ -31,10 +32,16 @@ const authSlice = createSlice({
         return elem;
       });
     },
+    addArtifactToCollection(state, action) {
+      state.collectedArtifacts.unshift(action.payload);
+    },
     removeArtifactFromCollection(state, action) {
       state.collectedArtifacts = state.collectedArtifacts.filter(
         (artifact) => artifact._id !== action.payload
       );
+    },
+    setArtifact(state, action) {
+      state.artifact = action.payload;
     }
   }
 });
