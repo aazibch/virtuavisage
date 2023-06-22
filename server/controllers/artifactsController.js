@@ -95,12 +95,14 @@ exports.getPublicArtifacts = catchAsync(async (req, res, next) => {
     .populate('user')
     .sort('-createdAt');
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      artifacts
-    }
-  });
+  setTimeout(() => {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        artifacts
+      }
+    });
+  }, 5000);
 });
 
 exports.makePublic = catchAsync(async (req, res, next) => {

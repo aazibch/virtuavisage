@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import {
-  Home,
+  HomePage,
   CreatePage,
   LoginPage,
   SignupPage,
@@ -17,74 +18,101 @@ import { useHttp } from './hooks';
 import { apiUrl } from './constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from './store/auth';
+import RootPage from './pages/RootPage';
+import { generateHttpConfig } from './utils';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootPage />,
+    children: [
+      {
+        path: '',
+        element: <HomePage />
+      },
+      {
+        path: '/auth/login',
+        element: <LoginPage />
+      },
+      {
+        path: '/auth/signup',
+        element: <SignupPage />
+      },
+      {
+        path: '/oauth/post',
+        element: <PostOAuth />
+      }
+    ]
+  }
+]);
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const { sendRequest } = useHttp();
-  const user = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+  // const [isLoading, setIsLoading] = useState(true);
+  // const { sendRequest } = useHttp();
+  // const user = useSelector((state) => state.user);
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    setIsLoading(true);
-    const getUser = () => {
-      const requestConfig = {
-        url: `${apiUrl}/v1/users/me`,
-        method: 'GET',
-        withCredentials: true,
-        credentials: 'include',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      };
-      const handleResponse = (response) => {
-        if (response.data.user) {
-          dispatch(authActions.login(response.data.user));
-        }
-        setIsLoading(false);
-      };
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const getUser = () => {
+  //     const requestConfig = {
+  //       url: `${apiUrl}/v1/users/me`,
+  //       method: 'GET',
+  //       withCredentials: true,
+  //       credentials: 'include',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json'
+  //       }
+  //     };
+  //     const handleResponse = (response) => {
+  //       if (response.data.user) {
+  //         dispatch(authActions.login(response.data.user));
+  //       }
+  //       setIsLoading(false);
+  //     };
 
-      const handleError = (error) => {
-        setIsLoading(false);
-      };
+  //     const handleError = (error) => {
+  //       setIsLoading(false);
+  //     };
 
-      sendRequest(requestConfig, handleResponse, handleError);
-    };
+  //     sendRequest(requestConfig, handleResponse, handleError);
+  //   };
 
-    getUser();
-  }, []);
+  //   getUser();
+  // }, []);
 
-  const authenticatedUserRoutes = (
-    <>
-      <Route path="/auth/logout" element={<LogoutPage />} />
-      <Route path="/account" element={<AccountPage />} />
-      <Route path="/create" element={<CreatePage />} />
-      <Route path="/collection" element={<CollectionPage />} />
-    </>
-  );
+  // const authenticatedUserRoutes = (
+  //   <>
+  //     <Route path="/auth/logout" element={<LogoutPage />} />
+  //     <Route path="/account" element={<AccountPage />} />
+  //     <Route path="/create" element={<CreatePage />} />
+  //     <Route path="/collection" element={<CollectionPage />} />
+  //   </>
+  // );
 
-  let content = (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth/login" element={<LoginPage />} />
-        <Route path="/auth/signup" element={<SignupPage />} />
-        {user && authenticatedUserRoutes}
-        <Route path="/oauth/post" element={<PostOAuth />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Layout>
-  );
+  // let content = (
+  //   <Layout>
+  //     <Routes>
+  //       <Route path="/" element={<HomePage />} />
+  //       <Route path="/auth/login" element={<LoginPage />} />
+  //       <Route path="/auth/signup" element={<SignupPage />} />
+  //       {user && authenticatedUserRoutes}
+  //       <Route path="/oauth/post" element={<PostOAuth />} />
+  //       <Route path="*" element={<NotFoundPage />} />
+  //     </Routes>
+  //   </Layout>
+  // );
 
-  if (isLoading) {
-    content = (
-      <div className="flex justify-center items-center mt-14">
-        <Loader />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   content = (
+  //     <div className="flex justify-center items-center mt-14">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
 
-  return content;
+  return <RouterProvider router={router} />;
 };
 
 export default App;

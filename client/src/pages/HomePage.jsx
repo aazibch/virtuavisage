@@ -5,7 +5,7 @@ import { apiUrl } from '../constants';
 import { generateHttpConfig } from '../utils';
 import { useHttp } from '../hooks';
 
-const Home = () => {
+const HomePage = () => {
   const [areArtifactsLoading, setAreArtifactsLoading] = useState(false);
   const [artifacts, setArtifacts] = useState(null);
   const [maximizedArtifact, setMaximizedArtifact] = useState(null);
@@ -144,4 +144,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;
