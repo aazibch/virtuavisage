@@ -101,6 +101,7 @@ const thunkAuthActions = {
           authActions.replaceArtifactInCollection(response.data.artifact)
         );
         dispatch(uiActions.setMaximizedArtifact(response.data.artifact));
+        dispatch(artifactsActions.addArtifactToPublic(response.data.artifact));
       }
     };
   },

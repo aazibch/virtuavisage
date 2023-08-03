@@ -11,6 +11,7 @@ const CollectionPage = () => {
   const areArtifactsLoading = useSelector((state) => state.ui.loading);
   const artifactsError = useSelector((state) => state.ui.error);
   const artifacts = useSelector((state) => state.auth.collectedArtifacts);
+  const user = useSelector((state) => state.auth.user);
   const maximizedArtifact = useSelector((state) => state.ui.maximizedArtifact);
   const [searchResults, setSearchResults] = useState(null);
   const dispatch = useDispatch();
@@ -67,7 +68,7 @@ const CollectionPage = () => {
       <ArtifactModal
         dismissModalHandler={closeMaximizedArtifactHandler}
         artifact={maximizedArtifact}
-        belongsToUser={true}
+        belongsToUser={user?._id === maximizedArtifact.user?._id}
       />
     );
   }
@@ -97,8 +98,8 @@ const CollectionPage = () => {
 
   if (searchResults?.length === 0) {
     artifactsContent = (
-      <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
-        No search results founds.
+      <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase col-span-3">
+        No search results found.
       </h2>
     );
   }
@@ -116,9 +117,9 @@ const CollectionPage = () => {
     ));
   }
 
-  if (!searchResults && !artifacts) {
+  if (searchResults?.length === 0 && artifacts?.length === 0) {
     artifactsContent = (
-      <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase">
+      <h2 className="mt-5 font-bold text-[#6469ff] text-xl uppercase col-span-3">
         No artifacts found
       </h2>
     );

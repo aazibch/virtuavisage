@@ -21,6 +21,9 @@ const artifactsSlice = createSlice({
       } else {
         state.publicArtifacts = updatedPublicArtifacts;
       }
+    },
+    addArtifactToPublic(state, action) {
+      state.publicArtifacts.unshift(action.payload);
     }
   }
 });

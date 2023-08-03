@@ -10,7 +10,7 @@ Users can signup either using local authentication or through their Google accou
 
 Stability AI's JavaScript gRPC client is used to generate and fetch the artifacts, while Cloudinary's SDK is utilized to store the artifacts, and MongoDB is used as the database.
 
-On this branch (refactoring-redux-state), I have moved almost all the local state to global, implemented via redux.
+On the Collection page, the real-time search functionality utilizes the debouncing technique to delay the search until a certain amount of time has passed since the user stopped typing. This ensures that the search function is not run with every keystroke, which can be inefficient and cause performance issues.
 
 ## Stable Diffusion
 

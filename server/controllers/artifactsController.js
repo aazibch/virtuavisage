@@ -73,9 +73,12 @@ exports.saveArtifactToCollection = catchAsync(async (req, res, next) => {
 });
 
 exports.removeArtifactFromCollection = catchAsync(async (req, res, next) => {
-  const { artifactId: id } = req.params;
+  const {
+    params: { artifactId: id },
+    user
+  } = req;
 
-  const artifact = await Artifact.findByIdAndDelete(id);
+  const artifact = await Artifact.findOneAndDelete({ _id: id, user });
 
   if (!artifact) return next(new AppError('Artifact not found.', 404));
 

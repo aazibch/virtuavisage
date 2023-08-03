@@ -57,7 +57,7 @@ const Header = () => {
               styleType="primary"
               linkProps={{ to: '/auth/login' }}
             >
-              Login
+              Login and Create
             </Button>
           )}
         </div>

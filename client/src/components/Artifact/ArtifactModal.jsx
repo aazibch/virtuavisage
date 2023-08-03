@@ -9,7 +9,8 @@ const ArtifactModal = ({
   dismissModalHandler,
   artifact,
   belongsToUser,
-  dropdownItems
+  dropdownItems,
+  isPublic
 }) => {
   const showDeletionModal = useSelector((state) => state.ui.showDeletionModal);
   const error = useSelector((state) => state.ui.error);
@@ -25,7 +26,7 @@ const ArtifactModal = ({
   };
 
   const removeFromPublicHandler = (e, id) => {
-    if (location.pathname === '/') {
+    if (isPublic) {
       dispatch(thunkAuthActions.removeArtifactFromPublic(id, true));
     } else {
       dispatch(thunkAuthActions.removeArtifactFromPublic(id));

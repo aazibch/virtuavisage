@@ -172,7 +172,7 @@ exports.onGenerationComplete = function onGenerationComplete(response) {
   console.log(
     `${
       response.imageArtifacts.length + response.filteredArtifacts.length
-    } artifacts were generated.`
+    } artifact(s) were generated.`
   );
 
   // Do something with the filtered artifacts

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import artifacts from './artifacts';
 
 const initialAuthState = {
   loading: false,
@@ -16,6 +17,8 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.user = null;
+      state.artifact = null;
+      state.collectedArtifacts = null;
     },
     setAuthLoading(state, action) {
       state.loading = action.payload;

@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader, Card, ArtifactModal, Modal } from '../components';
 import thunkArtifactsActions from '../store/artifacts-actions';
-import { artifactsActions } from '../store/artifacts';
 import { uiActions } from '../store/ui';
 
 const Home = () => {
@@ -15,9 +14,10 @@ const Home = () => {
   const loading = useSelector((state) => state.ui.loading);
 
   useEffect(() => {
-    dispatch(artifactsActions.setArtifacts(null));
-    dispatch(thunkArtifactsActions.fetchPublicArtifacts());
-  }, []);
+    if (!artifacts) {
+      dispatch(thunkArtifactsActions.fetchPublicArtifacts());
+    }
+  }, [artifacts]);
 
   const cardClickHandler = (e, id) => {
     const maximizedArtifact = artifacts.find((artifact) => artifact._id === id);
@@ -65,6 +65,7 @@ const Home = () => {
         dismissModalHandler={closeMaximizedArtifactHandler}
         artifact={maximizedArtifact}
         belongsToUser={user?._id === maximizedArtifact.user?._id}
+        isPublic
       />
     );
   }
@@ -93,11 +94,11 @@ const Home = () => {
       {errorModal}
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">
-          The Community Showcase
+          Community Artwork
         </h1>
         <p className="mt-2 text-[#666e75] text-[16px] max-w-[500px]">
-          Browse through a collection of imaginative and visually appealing
-          artifacts generated with Stable Diffusion.
+          Browse through a collection of diverse, visually-appealing artifacts
+          generated with the Stable Diffusion image generation model.
         </p>
       </div>
       {content}
