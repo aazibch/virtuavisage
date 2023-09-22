@@ -5,7 +5,7 @@ import thunkArtifactsActions from '../store/artifacts-actions';
 import { artifactsActions } from '../store/artifacts';
 import { uiActions } from '../store/ui';
 
-const Home = () => {
+const HomePage = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.user);
@@ -105,4 +105,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

@@ -1,6 +1,7 @@
 import FileSaver from 'file-saver';
 import { surpriseMePrompts } from '../constants';
 import { uiActions } from '../store/ui';
+import store from '../store';
 
 export const getRandomPrompt = (prompt) => {
   const randomIndex = Math.floor(Math.random() * surpriseMePrompts.length);
@@ -73,3 +74,19 @@ export const sendHttpRequest = async (
     dispatch(uiActions.setError('Something went wrong!'));
   }
 };
+
+export function checkAuthLoader() {
+  console.log(store.getState());
+
+  const {
+    auth: { user }
+  } = store.getState();
+
+  console.log('[checkAuthLoader]', user);
+
+  if (!user) {
+    throw json({ message: 'Page not found.' }, { status: 404 });
+  }
+
+  return null;
+}
