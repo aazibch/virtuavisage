@@ -21,7 +21,7 @@ const client = new GenerationServiceClient('https://grpc.stability.ai', {});
 
 // Make the request
 const generateArtifact = async (prompt) => {
-  const request = buildGenerationRequest('stable-diffusion-512-v2-1', {
+  const request = buildGenerationRequest('stable-diffusion-xl-1024-v1-0', {
     type: 'text-to-image',
     prompts: [
       {
